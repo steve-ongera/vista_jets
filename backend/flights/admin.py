@@ -248,9 +248,10 @@ class FlightBookingAdmin(admin.ModelAdmin):
     @admin.display(description="Quoted Price")
     def quoted_price_display(self, obj):
         if obj.quoted_price_usd:
+            formatted_price = f"{obj.quoted_price_usd:,.0f}"
             return format_html(
-                '<span style="color:#50C878;font-weight:600;">${:,.0f}</span>',
-                obj.quoted_price_usd
+                '<span style="color:#50C878;font-weight:600;">${}</span>',
+                formatted_price
             )
         return format_html('<span style="color:#888;">—</span>')
 
