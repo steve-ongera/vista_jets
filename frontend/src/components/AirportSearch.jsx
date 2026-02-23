@@ -1,15 +1,16 @@
 import { useState, useEffect, useRef } from 'react'
 import { searchAirports } from '../services/api'
 
-export default function AirportSearch({ label, value, onChange, placeholder = 'City or airport code' }) {
-  const [query, setQuery] = useState('')
+export default function AirportSearch({ label, value, onChange, placeholder = 'City, airport or IATA code', required }) {
+  const [query, setQuery]     = useState('')
   const [results, setResults] = useState([])
   const [loading, setLoading] = useState(false)
-  const [open, setOpen] = useState(false)
+  const [open, setOpen]       = useState(false)
   const ref = useRef(null)
 
+  /* Search with debounce */
   useEffect(() => {
-    const handler = setTimeout(async () => {
+    const t = setTimeout(async () => {
       if (query.length < 2) { setResults([]); return }
       setLoading(true)
       try {
@@ -17,17 +18,18 @@ export default function AirportSearch({ label, value, onChange, placeholder = 'C
         setResults(data.results || data)
       } catch { setResults([]) }
       finally { setLoading(false) }
-    }, 300)
-    return () => clearTimeout(handler)
+    }, 280)
+    return () => clearTimeout(t)
   }, [query])
 
+  /* Click outside */
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) setOpen(false)
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false) }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
   }, [])
+
+  const displayValue = query || (value ? `${value.city} (${value.code})` : '')
 
   const handleSelect = (airport) => {
     onChange(airport)
@@ -35,45 +37,71 @@ export default function AirportSearch({ label, value, onChange, placeholder = 'C
     setOpen(false)
   }
 
+  const handleChange = (e) => {
+    setQuery(e.target.value)
+    setOpen(true)
+    if (!e.target.value) onChange(null)
+  }
+
   return (
     <div className="form-group" ref={ref} style={{ position: 'relative' }}>
-      {label && <label className="form-label">{label}</label>}
-      <input
-        className="form-input"
-        value={query || (value ? `${value.city} (${value.code})` : '')}
-        onChange={e => { setQuery(e.target.value); setOpen(true); if (!e.target.value) onChange(null) }}
-        placeholder={placeholder}
-        onFocus={() => setOpen(true)}
-      />
-      {open && (query.length >= 2) && (
+      {label && (
+        <label className="form-label">
+          {label} {required && <span className="req">*</span>}
+        </label>
+      )}
+      <div style={{ position: 'relative' }}>
+        <i className="bi bi-geo-alt" style={{
+          position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)',
+          color: 'var(--gray-400)', fontSize: '0.9rem', pointerEvents: 'none',
+        }} />
+        <input
+          className="form-control"
+          style={{ paddingLeft: '2.25rem' }}
+          value={displayValue}
+          onChange={handleChange}
+          onFocus={() => setOpen(true)}
+          placeholder={placeholder}
+        />
+        {loading && (
+          <span className="spinner" style={{ position: 'absolute', right: '0.85rem', top: '50%', transform: 'translateY(-50%)' }} />
+        )}
+      </div>
+
+      {/* Dropdown */}
+      {open && query.length >= 2 && (
         <div style={{
-          position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 100,
-          background: 'var(--slate)', border: '1px solid var(--ash)',
-          borderTop: 'none', borderRadius: '0 0 2px 2px', maxHeight: 250, overflowY: 'auto'
+          position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 200,
+          background: 'var(--white)', border: '1.5px solid var(--gray-200)',
+          borderTop: 'none', borderRadius: '0 0 var(--radius) var(--radius)',
+          maxHeight: 260, overflowY: 'auto', boxShadow: 'var(--shadow-lg)',
         }}>
-          {loading && (
-            <div style={{ padding: '0.75rem 1rem', color: 'var(--ivory-dim)', fontSize: '0.8rem' }}>
-              Searching...
-            </div>
-          )}
           {!loading && results.length === 0 && (
-            <div style={{ padding: '0.75rem 1rem', color: 'var(--ivory-dim)', fontSize: '0.8rem' }}>
-              No airports found
+            <div style={{ padding: '0.85rem 1rem', fontSize: '0.82rem', color: 'var(--gray-400)' }}>
+              <i className="bi bi-exclamation-circle" style={{ marginRight: 6 }} />
+              No airports found for "{query}"
             </div>
           )}
           {results.map(airport => (
-            <div key={airport.id} onClick={() => handleSelect(airport)} style={{
-              padding: '0.75rem 1rem', cursor: 'pointer', borderBottom: '1px solid var(--ash)',
-              transition: 'background 0.15s',
-            }}
-              onMouseEnter={e => e.currentTarget.style.background = 'var(--smoke)'}
+            <div
+              key={airport.id}
+              onClick={() => handleSelect(airport)}
+              style={{
+                padding: '0.75rem 1rem', cursor: 'pointer',
+                borderBottom: '1px solid var(--gray-100)', transition: 'background 0.12s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--gray-50)'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             >
-              <div style={{ fontWeight: 500, fontSize: '0.85rem' }}>
-                <span style={{ color: 'var(--gold)', marginRight: 8 }}>{airport.code}</span>
-                {airport.name}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{
+                  fontSize: '0.72rem', fontWeight: 700, color: 'var(--gold)',
+                  background: 'var(--gold-pale)', padding: '1px 7px', borderRadius: 4,
+                  letterSpacing: '0.05em',
+                }}>{airport.code}</span>
+                <span style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--navy)' }}>{airport.name}</span>
               </div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--ivory-dim)' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--gray-400)', marginTop: 2, paddingLeft: 44 }}>
                 {airport.city}, {airport.country}
               </div>
             </div>

@@ -42,7 +42,9 @@ class AirportAdmin(admin.ModelAdmin):
 class AircraftAdmin(admin.ModelAdmin):
     list_display = (
         "name", "model", "category_badge", "passenger_capacity",
-        "range_km", "hourly_rate_usd", "availability_badge"
+        "range_km", "hourly_rate_usd",
+        "is_available",  # ✅ ADD THIS
+        "availability_badge"
     )
     list_filter = ("category", "is_available")
     search_fields = ("name", "model")
@@ -97,7 +99,9 @@ class AircraftAdmin(admin.ModelAdmin):
 class YachtAdmin(admin.ModelAdmin):
     list_display = (
         "name", "size_badge", "length_meters", "guest_capacity",
-        "crew_count", "home_port", "daily_rate_usd", "availability_badge"
+        "crew_count", "home_port", "daily_rate_usd",
+        "is_available",  # ✅ ADD THIS
+        "availability_badge"
     )
     list_filter = ("size_category", "is_available")
     search_fields = ("name", "home_port")
