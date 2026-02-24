@@ -211,3 +211,160 @@ class FlightInquiry(models.Model):
 
     def __str__(self):
         return f"Inquiry {self.reference} | {self.origin_description} → {self.destination_description}"
+
+
+# ── ADD THESE TO YOUR EXISTING models.py ──────────────────────────────────────
+
+class ContactInquiry(models.Model):
+    SUBJECT_CHOICES = [
+        ('general', 'General Inquiry'),
+        ('support', 'Customer Support'),
+        ('media', 'Media & Press'),
+        ('partnership', 'Partnership'),
+        ('careers', 'Careers'),
+        ('other', 'Other'),
+    ]
+    reference = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    full_name = models.CharField(max_length=200)
+    email = models.EmailField()
+    phone = models.CharField(max_length=30, blank=True)
+    company = models.CharField(max_length=200, blank=True)
+    subject = models.CharField(max_length=30, choices=SUBJECT_CHOICES, default='general')
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Contact {self.reference} | {self.full_name} | {self.subject}"
+
+
+class GroupCharterInquiry(models.Model):
+    GROUP_TYPE_CHOICES = [
+        ('corporate', 'Corporate / Business'),
+        ('sports_team', 'Sports Team'),
+        ('entertainment', 'Entertainment / Film'),
+        ('incentive', 'Incentive Group'),
+        ('wedding', 'Wedding Party'),
+        ('government', 'Government / Diplomatic'),
+        ('other', 'Other'),
+    ]
+    reference = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    contact_name = models.CharField(max_length=200)
+    email = models.EmailField()
+    phone = models.CharField(max_length=30, blank=True)
+    company = models.CharField(max_length=200, blank=True)
+
+    group_type = models.CharField(max_length=30, choices=GROUP_TYPE_CHOICES)
+    group_size = models.PositiveIntegerField()
+    origin_description = models.CharField(max_length=300)
+    destination_description = models.CharField(max_length=300)
+    departure_date = models.DateField(null=True, blank=True)
+    return_date = models.DateField(null=True, blank=True)
+    is_round_trip = models.BooleanField(default=False)
+
+    preferred_aircraft_category = models.CharField(max_length=30, blank=True)
+    catering_required = models.BooleanField(default=False)
+    ground_transport_required = models.BooleanField(default=False)
+    budget_range = models.CharField(max_length=100, blank=True)
+    additional_notes = models.TextField(blank=True)
+
+    status = models.CharField(max_length=20, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Group Charter {self.reference} | {self.group_type} | {self.group_size} pax"
+
+
+class AirCargoInquiry(models.Model):
+    CARGO_TYPE_CHOICES = [
+        ('general', 'General Cargo'),
+        ('perishables', 'Perishables / Fresh Produce'),
+        ('pharma', 'Pharmaceuticals / Medical'),
+        ('dangerous_goods', 'Dangerous Goods (DG)'),
+        ('live_animals', 'Live Animals'),
+        ('artwork', 'Artwork / High Value'),
+        ('automotive', 'Automotive / Vehicles'),
+        ('oversized', 'Oversized / Heavy Lift'),
+        ('humanitarian', 'Humanitarian / Aid'),
+        ('other', 'Other'),
+    ]
+    URGENCY_CHOICES = [
+        ('standard', 'Standard (3-5 days)'),
+        ('express', 'Express (24-48 hrs)'),
+        ('critical', 'Critical / AOG (same day)'),
+    ]
+
+    reference = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    contact_name = models.CharField(max_length=200)
+    email = models.EmailField()
+    phone = models.CharField(max_length=30, blank=True)
+    company = models.CharField(max_length=200, blank=True)
+
+    cargo_type = models.CharField(max_length=30, choices=CARGO_TYPE_CHOICES)
+    cargo_description = models.TextField()
+    weight_kg = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    volume_m3 = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    dimensions = models.CharField(max_length=200, blank=True, help_text="L x W x H in cm")
+
+    origin_description = models.CharField(max_length=300)
+    destination_description = models.CharField(max_length=300)
+    pickup_date = models.DateField(null=True, blank=True)
+    urgency = models.CharField(max_length=20, choices=URGENCY_CHOICES, default='standard')
+
+    is_hazardous = models.BooleanField(default=False)
+    requires_temperature_control = models.BooleanField(default=False)
+    insurance_required = models.BooleanField(default=False)
+    customs_assistance_needed = models.BooleanField(default=False)
+
+    additional_notes = models.TextField(blank=True)
+    status = models.CharField(max_length=20, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Air Cargo {self.reference} | {self.cargo_type} | {self.origin_description} → {self.destination_description}"
+
+
+class AircraftSalesInquiry(models.Model):
+    INQUIRY_TYPE_CHOICES = [
+        ('buy', 'Looking to Buy'),
+        ('sell', 'Looking to Sell'),
+        ('trade', 'Trade / Part Exchange'),
+        ('valuation', 'Valuation Only'),
+    ]
+    BUDGET_CHOICES = [
+        ('under_2m', 'Under $2M'),
+        ('2m_5m', '$2M – $5M'),
+        ('5m_15m', '$5M – $15M'),
+        ('15m_30m', '$15M – $30M'),
+        ('30m_60m', '$30M – $60M'),
+        ('over_60m', 'Over $60M'),
+        ('not_disclosed', 'Prefer not to say'),
+    ]
+
+    reference = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    contact_name = models.CharField(max_length=200)
+    email = models.EmailField()
+    phone = models.CharField(max_length=30, blank=True)
+    company = models.CharField(max_length=200, blank=True)
+
+    inquiry_type = models.CharField(max_length=20, choices=INQUIRY_TYPE_CHOICES)
+
+    # For buyers
+    preferred_category = models.CharField(max_length=30, blank=True)
+    preferred_make_model = models.CharField(max_length=200, blank=True)
+    budget_range = models.CharField(max_length=20, choices=BUDGET_CHOICES, blank=True)
+    new_or_pre_owned = models.CharField(max_length=20, choices=[('new','New'),('pre_owned','Pre-Owned'),('either','Either')], default='either')
+
+    # For sellers
+    aircraft_make = models.CharField(max_length=100, blank=True)
+    aircraft_model = models.CharField(max_length=100, blank=True)
+    year_of_manufacture = models.PositiveIntegerField(null=True, blank=True)
+    serial_number = models.CharField(max_length=100, blank=True)
+    total_flight_hours = models.PositiveIntegerField(null=True, blank=True)
+    asking_price_usd = models.DecimalField(max_digits=14, decimal_places=2, null=True, blank=True)
+
+    message = models.TextField(blank=True)
+    status = models.CharField(max_length=20, default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Aircraft Sale {self.reference} | {self.inquiry_type} | {self.contact_name}"

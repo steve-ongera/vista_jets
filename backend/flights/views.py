@@ -230,3 +230,116 @@ class QuickQuoteView(APIView):
             })
         except Exception as e:
             return Response({'error': str(e)}, status=400)
+        
+        
+# ── ADD THESE IMPORTS to views.py ─────────────────────────────────────────────
+from .models import (ContactInquiry, GroupCharterInquiry, AirCargoInquiry, AircraftSalesInquiry)
+from .serializers import (ContactInquirySerializer, GroupCharterInquirySerializer, AirCargoInquirySerializer, AircraftSalesInquirySerializer)
+
+
+class ContactInquiryViewSet(viewsets.ModelViewSet):
+    """Contact form submissions"""
+    permission_classes = [AllowAny]
+    serializer_class = ContactInquirySerializer
+
+    def get_queryset(self):
+        return ContactInquiry.objects.order_by('-created_at')
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        inquiry = serializer.save()
+        return Response(
+            {
+                'message': "Thank you for reaching out. A member of our team will respond within 24 hours.",
+                'inquiry': ContactInquirySerializer(inquiry).data
+            },
+            status=status.HTTP_201_CREATED
+        )
+
+
+class GroupCharterInquiryViewSet(viewsets.ModelViewSet):
+    """Group charter inquiries"""
+    permission_classes = [AllowAny]
+    serializer_class = GroupCharterInquirySerializer
+
+    def get_queryset(self):
+        return GroupCharterInquiry.objects.order_by('-created_at')
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        inquiry = serializer.save()
+        return Response(
+            {
+                'message': 'Your group charter inquiry has been received. Our team will contact you with a tailored solution within 4 hours.',
+                'inquiry': GroupCharterInquirySerializer(inquiry).data
+            },
+            status=status.HTTP_201_CREATED
+        )
+
+    @action(detail=False, methods=['get'], url_path='track/(?P<reference>[^/.]+)')
+    def track(self, request, reference=None):
+        try:
+            inquiry = GroupCharterInquiry.objects.get(reference=reference)
+            return Response(GroupCharterInquirySerializer(inquiry).data)
+        except GroupCharterInquiry.DoesNotExist:
+            return Response({'error': 'Inquiry not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class AirCargoInquiryViewSet(viewsets.ModelViewSet):
+    """Air cargo inquiries"""
+    permission_classes = [AllowAny]
+    serializer_class = AirCargoInquirySerializer
+
+    def get_queryset(self):
+        return AirCargoInquiry.objects.order_by('-created_at')
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        inquiry = serializer.save()
+        return Response(
+            {
+                'message': 'Your air cargo inquiry has been submitted. A cargo specialist will respond within 2 hours.',
+                'inquiry': AirCargoInquirySerializer(inquiry).data
+            },
+            status=status.HTTP_201_CREATED
+        )
+
+    @action(detail=False, methods=['get'], url_path='track/(?P<reference>[^/.]+)')
+    def track(self, request, reference=None):
+        try:
+            inquiry = AirCargoInquiry.objects.get(reference=reference)
+            return Response(AirCargoInquirySerializer(inquiry).data)
+        except AirCargoInquiry.DoesNotExist:
+            return Response({'error': 'Inquiry not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class AircraftSalesInquiryViewSet(viewsets.ModelViewSet):
+    """Aircraft buy/sell/trade inquiries"""
+    permission_classes = [AllowAny]
+    serializer_class = AircraftSalesInquirySerializer
+
+    def get_queryset(self):
+        return AircraftSalesInquiry.objects.order_by('-created_at')
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        inquiry = serializer.save()
+        return Response(
+            {
+                'message': 'Your aircraft sales inquiry has been received. Our aviation sales team will be in touch within 24 hours.',
+                'inquiry': AircraftSalesInquirySerializer(inquiry).data
+            },
+            status=status.HTTP_201_CREATED
+        )
+
+    @action(detail=False, methods=['get'], url_path='track/(?P<reference>[^/.]+)')
+    def track(self, request, reference=None):
+        try:
+            inquiry = AircraftSalesInquiry.objects.get(reference=reference)
+            return Response(AircraftSalesInquirySerializer(inquiry).data)
+        except AircraftSalesInquiry.DoesNotExist:
+            return Response({'error': 'Inquiry not found.'}, status=status.HTTP_404_NOT_FOUND)

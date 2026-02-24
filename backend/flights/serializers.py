@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import (
     Airport, Aircraft, Yacht,
     FlightBooking, FlightLeg, YachtCharter,
-    LeaseInquiry, FlightInquiry
+    LeaseInquiry, FlightInquiry , ContactInquiry , GroupCharterInquiry , AirCargoInquiry , AircraftSalesInquiry
 )
 
 
@@ -124,3 +124,57 @@ class FlightInquirySerializer(serializers.ModelSerializer):
 class BookingStatusSerializer(serializers.Serializer):
     """Used for tracking bookings by reference"""
     reference = serializers.UUIDField()
+    
+    
+
+# ── ADD THESE IMPORTS to the top of serializers.py ───────────────────────────
+# from .models import (...existing..., ContactInquiry, GroupCharterInquiry, AirCargoInquiry, AircraftSalesInquiry)
+
+
+class ContactInquirySerializer(serializers.ModelSerializer):
+    reference = serializers.UUIDField(read_only=True)
+
+    class Meta:
+        model = ContactInquiry
+        fields = '__all__'
+        read_only_fields = ['reference', 'created_at']
+
+
+class GroupCharterInquirySerializer(serializers.ModelSerializer):
+    reference = serializers.UUIDField(read_only=True)
+    group_type_display = serializers.CharField(source='get_group_type_display', read_only=True)
+
+    class Meta:
+        model = GroupCharterInquiry
+        fields = '__all__'
+        read_only_fields = ['reference', 'status', 'created_at']
+
+    def validate(self, data):
+        if data.get('is_round_trip') and not data.get('return_date'):
+            raise serializers.ValidationError({'return_date': 'Return date required for round trip.'})
+        if data.get('return_date') and data.get('departure_date'):
+            if data['return_date'] < data['departure_date']:
+                raise serializers.ValidationError({'return_date': 'Return date must be after departure date.'})
+        return data
+
+
+class AirCargoInquirySerializer(serializers.ModelSerializer):
+    reference = serializers.UUIDField(read_only=True)
+    cargo_type_display = serializers.CharField(source='get_cargo_type_display', read_only=True)
+    urgency_display = serializers.CharField(source='get_urgency_display', read_only=True)
+
+    class Meta:
+        model = AirCargoInquiry
+        fields = '__all__'
+        read_only_fields = ['reference', 'status', 'created_at']
+
+
+class AircraftSalesInquirySerializer(serializers.ModelSerializer):
+    reference = serializers.UUIDField(read_only=True)
+    inquiry_type_display = serializers.CharField(source='get_inquiry_type_display', read_only=True)
+    budget_range_display = serializers.CharField(source='get_budget_range_display', read_only=True)
+
+    class Meta:
+        model = AircraftSalesInquiry
+        fields = '__all__'
+        read_only_fields = ['reference', 'status', 'created_at']

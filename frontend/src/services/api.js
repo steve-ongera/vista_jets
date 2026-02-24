@@ -55,3 +55,28 @@ export const createFlightInquiry = (data) =>
 // ── Quick Quote ───────────────────────────────────────────────────────────────
 export const getQuickQuote = (data) =>
   request('/quick-quote/', { method: 'POST', body: data });
+
+// ── Contact ───────────────────────────────────────────────────────────────────
+export const createContactInquiry = (data) =>
+  request('/contact/', { method: 'POST', body: data });
+
+// ── Group Charter ─────────────────────────────────────────────────────────────
+export const createGroupCharterInquiry = (data) =>
+  request('/group-charters/', { method: 'POST', body: data });
+
+export const trackGroupCharter = (reference) =>
+  request(`/group-charters/track/${reference}/`);
+
+// ── Air Cargo ─────────────────────────────────────────────────────────────────
+export const createAirCargoInquiry = (data) =>
+  request('/air-cargo/', { method: 'POST', body: data });
+
+export const trackAirCargo = (reference) =>
+  request(`/air-cargo/track/${reference}/`);
+
+// ── Aircraft Sales ────────────────────────────────────────────────────────────
+export const createAircraftSalesInquiry = (data) =>
+  request('/aircraft-sales/', { method: 'POST', body: data });
+
+export const trackAircraftSales = (reference) =>
+  request(`/aircraft-sales/track/${reference}/`);

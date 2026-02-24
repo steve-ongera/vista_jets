@@ -4,7 +4,10 @@ from .views import (
     AirportViewSet, AircraftViewSet, YachtViewSet,
     FlightBookingViewSet, YachtCharterViewSet,
     LeaseInquiryViewSet, FlightInquiryViewSet,
-    QuickQuoteView
+    QuickQuoteView,
+    # NEW
+    ContactInquiryViewSet, GroupCharterInquiryViewSet,
+    AirCargoInquiryViewSet, AircraftSalesInquiryViewSet,
 )
 
 router = DefaultRouter()
@@ -15,6 +18,11 @@ router.register(r'flight-bookings', FlightBookingViewSet, basename='flight-booki
 router.register(r'yacht-charters', YachtCharterViewSet, basename='yacht-charter')
 router.register(r'lease-inquiries', LeaseInquiryViewSet, basename='lease-inquiry')
 router.register(r'flight-inquiries', FlightInquiryViewSet, basename='flight-inquiry')
+# NEW
+router.register(r'contact', ContactInquiryViewSet, basename='contact')
+router.register(r'group-charters', GroupCharterInquiryViewSet, basename='group-charter')
+router.register(r'air-cargo', AirCargoInquiryViewSet, basename='air-cargo')
+router.register(r'aircraft-sales', AircraftSalesInquiryViewSet, basename='aircraft-sales')
 
 urlpatterns = [
     path('', include(router.urls)),
