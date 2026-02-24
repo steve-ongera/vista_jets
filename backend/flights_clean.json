@@ -1,0 +1,2031 @@
+﻿[
+{
+    "model": "flights.airport",
+    "pk": 1,
+    "fields": {
+        "code": "JFK",
+        "name": "John F. Kennedy International Airport",
+        "city": "New York",
+        "country": "USA",
+        "latitude": "40.641300",
+        "longitude": "-73.778100"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 2,
+    "fields": {
+        "code": "TEB",
+        "name": "Teterboro Airport",
+        "city": "Teterboro",
+        "country": "USA",
+        "latitude": "40.850100",
+        "longitude": "-74.060800"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 3,
+    "fields": {
+        "code": "VNY",
+        "name": "Van Nuys Airport",
+        "city": "Los Angeles",
+        "country": "USA",
+        "latitude": "34.209800",
+        "longitude": "-118.489800"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 4,
+    "fields": {
+        "code": "LAX",
+        "name": "Los Angeles International Airport",
+        "city": "Los Angeles",
+        "country": "USA",
+        "latitude": "33.942500",
+        "longitude": "-118.408100"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 5,
+    "fields": {
+        "code": "MIA",
+        "name": "Miami International Airport",
+        "city": "Miami",
+        "country": "USA",
+        "latitude": "25.795900",
+        "longitude": "-80.287000"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 6,
+    "fields": {
+        "code": "OPF",
+        "name": "Miami-Opa Locka Executive Airport",
+        "city": "Miami",
+        "country": "USA",
+        "latitude": "25.907000",
+        "longitude": "-80.278400"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 7,
+    "fields": {
+        "code": "ORD",
+        "name": "O'Hare International Airport",
+        "city": "Chicago",
+        "country": "USA",
+        "latitude": "41.974200",
+        "longitude": "-87.907300"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 8,
+    "fields": {
+        "code": "MDW",
+        "name": "Chicago Midway International Airport",
+        "city": "Chicago",
+        "country": "USA",
+        "latitude": "41.786800",
+        "longitude": "-87.752200"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 9,
+    "fields": {
+        "code": "DFW",
+        "name": "Dallas/Fort Worth International Airport",
+        "city": "Dallas",
+        "country": "USA",
+        "latitude": "32.899800",
+        "longitude": "-97.040300"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 10,
+    "fields": {
+        "code": "HOU",
+        "name": "William P. Hobby Airport",
+        "city": "Houston",
+        "country": "USA",
+        "latitude": "29.645400",
+        "longitude": "-95.278900"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 11,
+    "fields": {
+        "code": "SFO",
+        "name": "San Francisco International Airport",
+        "city": "San Francisco",
+        "country": "USA",
+        "latitude": "37.621300",
+        "longitude": "-122.379000"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 12,
+    "fields": {
+        "code": "SQL",
+        "name": "San Carlos Airport",
+        "city": "San Carlos",
+        "country": "USA",
+        "latitude": "37.511900",
+        "longitude": "-122.249700"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 13,
+    "fields": {
+        "code": "BOS",
+        "name": "Boston Logan International Airport",
+        "city": "Boston",
+        "country": "USA",
+        "latitude": "42.365600",
+        "longitude": "-71.009600"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 14,
+    "fields": {
+        "code": "BED",
+        "name": "Hanscom Field",
+        "city": "Bedford",
+        "country": "USA",
+        "latitude": "42.470000",
+        "longitude": "-71.289000"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 15,
+    "fields": {
+        "code": "IAD",
+        "name": "Washington Dulles International Airport",
+        "city": "Washington D.C.",
+        "country": "USA",
+        "latitude": "38.953100",
+        "longitude": "-77.456500"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 16,
+    "fields": {
+        "code": "LAS",
+        "name": "Harry Reid International Airport",
+        "city": "Las Vegas",
+        "country": "USA",
+        "latitude": "36.084000",
+        "longitude": "-115.153700"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 17,
+    "fields": {
+        "code": "HND",
+        "name": "Tokyo Haneda Airport",
+        "city": "Tokyo",
+        "country": "Japan",
+        "latitude": "35.549300",
+        "longitude": "139.779800"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 18,
+    "fields": {
+        "code": "SEA",
+        "name": "Seattle-Tacoma International Airport",
+        "city": "Seattle",
+        "country": "USA",
+        "latitude": "47.450200",
+        "longitude": "-122.308800"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 19,
+    "fields": {
+        "code": "BFI",
+        "name": "King County International Airport (Boeing)",
+        "city": "Seattle",
+        "country": "USA",
+        "latitude": "47.530000",
+        "longitude": "-122.301900"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 20,
+    "fields": {
+        "code": "ATL",
+        "name": "Hartsfield-Jackson Atlanta International",
+        "city": "Atlanta",
+        "country": "USA",
+        "latitude": "33.640700",
+        "longitude": "-84.427700"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 21,
+    "fields": {
+        "code": "PDK",
+        "name": "DeKalb-Peachtree Airport",
+        "city": "Atlanta",
+        "country": "USA",
+        "latitude": "33.875600",
+        "longitude": "-84.302000"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 22,
+    "fields": {
+        "code": "DEN",
+        "name": "Denver International Airport",
+        "city": "Denver",
+        "country": "USA",
+        "latitude": "39.856100",
+        "longitude": "-104.673700"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 23,
+    "fields": {
+        "code": "APA",
+        "name": "Centennial Airport",
+        "city": "Denver",
+        "country": "USA",
+        "latitude": "39.570100",
+        "longitude": "-104.849100"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 24,
+    "fields": {
+        "code": "MCO",
+        "name": "Orlando International Airport",
+        "city": "Orlando",
+        "country": "USA",
+        "latitude": "28.431200",
+        "longitude": "-81.308100"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 25,
+    "fields": {
+        "code": "PBI",
+        "name": "Palm Beach International Airport",
+        "city": "Palm Beach",
+        "country": "USA",
+        "latitude": "26.683200",
+        "longitude": "-80.095600"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 26,
+    "fields": {
+        "code": "EYW",
+        "name": "Key West International Airport",
+        "city": "Key West",
+        "country": "USA",
+        "latitude": "24.556100",
+        "longitude": "-81.759600"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 27,
+    "fields": {
+        "code": "ASP",
+        "name": "Aspen/Pitkin County Airport",
+        "city": "Aspen",
+        "country": "USA",
+        "latitude": "39.223200",
+        "longitude": "-106.868800"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 28,
+    "fields": {
+        "code": "SUN",
+        "name": "Friedman Memorial Airport",
+        "city": "Sun Valley",
+        "country": "USA",
+        "latitude": "43.504400",
+        "longitude": "-114.296400"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 29,
+    "fields": {
+        "code": "HPN",
+        "name": "Westchester County Airport",
+        "city": "White Plains",
+        "country": "USA",
+        "latitude": "41.067000",
+        "longitude": "-73.707600"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 30,
+    "fields": {
+        "code": "YYZ",
+        "name": "Toronto Pearson International Airport",
+        "city": "Toronto",
+        "country": "Canada",
+        "latitude": "43.677700",
+        "longitude": "-79.624800"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 31,
+    "fields": {
+        "code": "YUL",
+        "name": "MontrΘal-Trudeau International Airport",
+        "city": "Montreal",
+        "country": "Canada",
+        "latitude": "45.470600",
+        "longitude": "-73.740800"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 32,
+    "fields": {
+        "code": "YVR",
+        "name": "Vancouver International Airport",
+        "city": "Vancouver",
+        "country": "Canada",
+        "latitude": "49.194700",
+        "longitude": "-123.179200"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 33,
+    "fields": {
+        "code": "MEX",
+        "name": "Benito Jußrez International Airport",
+        "city": "Mexico City",
+        "country": "Mexico",
+        "latitude": "19.436300",
+        "longitude": "-99.072100"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 34,
+    "fields": {
+        "code": "CUN",
+        "name": "Canc·n International Airport",
+        "city": "Canc·n",
+        "country": "Mexico",
+        "latitude": "21.036500",
+        "longitude": "-86.877000"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 35,
+    "fields": {
+        "code": "LHR",
+        "name": "London Heathrow Airport",
+        "city": "London",
+        "country": "UK",
+        "latitude": "51.470000",
+        "longitude": "-0.454300"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 36,
+    "fields": {
+        "code": "LCY",
+        "name": "London City Airport",
+        "city": "London",
+        "country": "UK",
+        "latitude": "51.505300",
+        "longitude": "0.055300"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 37,
+    "fields": {
+        "code": "FAB",
+        "name": "Farnborough Airport",
+        "city": "Farnborough",
+        "country": "UK",
+        "latitude": "51.277600",
+        "longitude": "-0.776200"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 38,
+    "fields": {
+        "code": "CDG",
+        "name": "Paris Charles de Gaulle Airport",
+        "city": "Paris",
+        "country": "France",
+        "latitude": "49.009700",
+        "longitude": "2.547900"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 39,
+    "fields": {
+        "code": "LBG",
+        "name": "Paris Le Bourget Airport",
+        "city": "Paris",
+        "country": "France",
+        "latitude": "48.969400",
+        "longitude": "2.441400"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 40,
+    "fields": {
+        "code": "NCE",
+        "name": "Nice C⌠te d'Azur Airport",
+        "city": "Nice",
+        "country": "France",
+        "latitude": "43.658400",
+        "longitude": "7.215900"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 41,
+    "fields": {
+        "code": "TXL",
+        "name": "Berlin Brandenburg Airport",
+        "city": "Berlin",
+        "country": "Germany",
+        "latitude": "52.366700",
+        "longitude": "13.503300"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 42,
+    "fields": {
+        "code": "MUC",
+        "name": "Munich Airport",
+        "city": "Munich",
+        "country": "Germany",
+        "latitude": "48.353700",
+        "longitude": "11.775000"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 43,
+    "fields": {
+        "code": "FRA",
+        "name": "Frankfurt Airport",
+        "city": "Frankfurt",
+        "country": "Germany",
+        "latitude": "50.037900",
+        "longitude": "8.562200"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 44,
+    "fields": {
+        "code": "ZRH",
+        "name": "Zurich Airport",
+        "city": "Zurich",
+        "country": "Switzerland",
+        "latitude": "47.458200",
+        "longitude": "8.555500"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 45,
+    "fields": {
+        "code": "GVA",
+        "name": "Geneva Airport",
+        "city": "Geneva",
+        "country": "Switzerland",
+        "latitude": "46.238100",
+        "longitude": "6.108900"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 46,
+    "fields": {
+        "code": "AMS",
+        "name": "Amsterdam Schiphol Airport",
+        "city": "Amsterdam",
+        "country": "Netherlands",
+        "latitude": "52.310500",
+        "longitude": "4.768300"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 47,
+    "fields": {
+        "code": "MAD",
+        "name": "Adolfo Sußrez Madrid-Barajas Airport",
+        "city": "Madrid",
+        "country": "Spain",
+        "latitude": "40.493600",
+        "longitude": "-3.566800"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 48,
+    "fields": {
+        "code": "BCN",
+        "name": "Josep Tarradellas Barcelona-El Prat Airport",
+        "city": "Barcelona",
+        "country": "Spain",
+        "latitude": "41.297100",
+        "longitude": "2.078500"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 49,
+    "fields": {
+        "code": "IBZ",
+        "name": "Ibiza Airport",
+        "city": "Ibiza",
+        "country": "Spain",
+        "latitude": "38.872900",
+        "longitude": "1.373100"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 50,
+    "fields": {
+        "code": "PMI",
+        "name": "Palma de Mallorca Airport",
+        "city": "Palma",
+        "country": "Spain",
+        "latitude": "39.551700",
+        "longitude": "2.738800"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 51,
+    "fields": {
+        "code": "FCO",
+        "name": "Rome Fiumicino Airport",
+        "city": "Rome",
+        "country": "Italy",
+        "latitude": "41.800300",
+        "longitude": "12.238900"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 52,
+    "fields": {
+        "code": "MXP",
+        "name": "Milan Malpensa Airport",
+        "city": "Milan",
+        "country": "Italy",
+        "latitude": "45.630600",
+        "longitude": "8.728100"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 53,
+    "fields": {
+        "code": "VCE",
+        "name": "Venice Marco Polo Airport",
+        "city": "Venice",
+        "country": "Italy",
+        "latitude": "45.505300",
+        "longitude": "12.351900"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 54,
+    "fields": {
+        "code": "OLB",
+        "name": "Olbia Costa Smeralda Airport",
+        "city": "Olbia",
+        "country": "Italy",
+        "latitude": "40.898700",
+        "longitude": "9.517600"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 55,
+    "fields": {
+        "code": "ATH",
+        "name": "Athens International Airport",
+        "city": "Athens",
+        "country": "Greece",
+        "latitude": "37.936400",
+        "longitude": "23.944500"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 56,
+    "fields": {
+        "code": "JTR",
+        "name": "Santorini (Thira) Airport",
+        "city": "Santorini",
+        "country": "Greece",
+        "latitude": "36.399200",
+        "longitude": "25.479300"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 57,
+    "fields": {
+        "code": "JMK",
+        "name": "Mykonos Island National Airport",
+        "city": "Mykonos",
+        "country": "Greece",
+        "latitude": "37.435100",
+        "longitude": "25.348100"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 58,
+    "fields": {
+        "code": "HER",
+        "name": "Heraklion International Airport",
+        "city": "Crete",
+        "country": "Greece",
+        "latitude": "35.339700",
+        "longitude": "25.180300"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 59,
+    "fields": {
+        "code": "SVO",
+        "name": "Sheremetyevo International Airport",
+        "city": "Moscow",
+        "country": "Russia",
+        "latitude": "55.972600",
+        "longitude": "37.414600"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 60,
+    "fields": {
+        "code": "VKO",
+        "name": "Vnukovo International Airport",
+        "city": "Moscow",
+        "country": "Russia",
+        "latitude": "55.591500",
+        "longitude": "37.261500"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 61,
+    "fields": {
+        "code": "DXB",
+        "name": "Dubai International Airport",
+        "city": "Dubai",
+        "country": "UAE",
+        "latitude": "25.253200",
+        "longitude": "55.365700"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 62,
+    "fields": {
+        "code": "DWC",
+        "name": "Al Maktoum International Airport",
+        "city": "Dubai",
+        "country": "UAE",
+        "latitude": "24.896300",
+        "longitude": "55.161200"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 63,
+    "fields": {
+        "code": "AUH",
+        "name": "Abu Dhabi International Airport",
+        "city": "Abu Dhabi",
+        "country": "UAE",
+        "latitude": "24.433000",
+        "longitude": "54.651100"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 64,
+    "fields": {
+        "code": "DOH",
+        "name": "Hamad International Airport",
+        "city": "Doha",
+        "country": "Qatar",
+        "latitude": "25.273100",
+        "longitude": "51.608100"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 65,
+    "fields": {
+        "code": "RUH",
+        "name": "King Khalid International Airport",
+        "city": "Riyadh",
+        "country": "Saudi Arabia",
+        "latitude": "24.957800",
+        "longitude": "46.698800"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 66,
+    "fields": {
+        "code": "JED",
+        "name": "King Abdulaziz International Airport",
+        "city": "Jeddah",
+        "country": "Saudi Arabia",
+        "latitude": "21.679600",
+        "longitude": "39.156500"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 67,
+    "fields": {
+        "code": "TLV",
+        "name": "Ben Gurion International Airport",
+        "city": "Tel Aviv",
+        "country": "Israel",
+        "latitude": "32.011400",
+        "longitude": "34.886700"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 68,
+    "fields": {
+        "code": "CAI",
+        "name": "Cairo International Airport",
+        "city": "Cairo",
+        "country": "Egypt",
+        "latitude": "30.121900",
+        "longitude": "31.405600"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 69,
+    "fields": {
+        "code": "CPT",
+        "name": "Cape Town International Airport",
+        "city": "Cape Town",
+        "country": "South Africa",
+        "latitude": "-33.971500",
+        "longitude": "18.602100"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 70,
+    "fields": {
+        "code": "JNB",
+        "name": "O.R. Tambo International Airport",
+        "city": "Johannesburg",
+        "country": "South Africa",
+        "latitude": "-26.139200",
+        "longitude": "28.246000"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 71,
+    "fields": {
+        "code": "MBA",
+        "name": "Moi International Airport",
+        "city": "Mombasa",
+        "country": "Kenya",
+        "latitude": "-4.034800",
+        "longitude": "39.594200"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 72,
+    "fields": {
+        "code": "HKG",
+        "name": "Hong Kong International Airport",
+        "city": "Hong Kong",
+        "country": "Hong Kong",
+        "latitude": "22.308000",
+        "longitude": "113.918500"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 73,
+    "fields": {
+        "code": "SIN",
+        "name": "Singapore Changi Airport",
+        "city": "Singapore",
+        "country": "Singapore",
+        "latitude": "1.364400",
+        "longitude": "103.991500"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 74,
+    "fields": {
+        "code": "NRT",
+        "name": "Tokyo Narita International Airport",
+        "city": "Tokyo",
+        "country": "Japan",
+        "latitude": "35.771900",
+        "longitude": "140.392900"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 75,
+    "fields": {
+        "code": "SYD",
+        "name": "Sydney Kingsford Smith Airport",
+        "city": "Sydney",
+        "country": "Australia",
+        "latitude": "-33.939900",
+        "longitude": "151.175300"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 76,
+    "fields": {
+        "code": "MEL",
+        "name": "Melbourne Airport",
+        "city": "Melbourne",
+        "country": "Australia",
+        "latitude": "-37.669000",
+        "longitude": "144.841000"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 77,
+    "fields": {
+        "code": "BKK",
+        "name": "Suvarnabhumi Airport",
+        "city": "Bangkok",
+        "country": "Thailand",
+        "latitude": "13.681100",
+        "longitude": "100.747500"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 78,
+    "fields": {
+        "code": "PQC",
+        "name": "Phu Quoc International Airport",
+        "city": "Phu Quoc",
+        "country": "Vietnam",
+        "latitude": "10.227000",
+        "longitude": "103.967300"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 79,
+    "fields": {
+        "code": "MLE",
+        "name": "Velana International Airport",
+        "city": "MalΘ",
+        "country": "Maldives",
+        "latitude": "4.191800",
+        "longitude": "73.529000"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 80,
+    "fields": {
+        "code": "BOM",
+        "name": "Chhatrapati Shivaji Maharaj International",
+        "city": "Mumbai",
+        "country": "India",
+        "latitude": "19.089600",
+        "longitude": "72.865600"
+    }
+},
+{
+    "model": "flights.airport",
+    "pk": 81,
+    "fields": {
+        "code": "DEL",
+        "name": "Indira Gandhi International Airport",
+        "city": "New Delhi",
+        "country": "India",
+        "latitude": "28.556200",
+        "longitude": "77.100000"
+    }
+},
+{
+    "model": "flights.aircraft",
+    "pk": 1,
+    "fields": {
+        "name": "Cessna Citation CJ4",
+        "model": "Citation CJ4",
+        "category": "light",
+        "passenger_capacity": 8,
+        "range_km": 3204,
+        "cruise_speed_kmh": 778,
+        "description": "The pinnacle of the CJ family, offering a transcontinental light jet experience. Features a flat-floor cabin with stand-up headroom and exceptional fuel efficiency for trips up to 1,700 nm.",
+        "amenities": [
+            "WiFi",
+            "Leather seating",
+            "Refreshment center",
+            "Enclosed lavatory",
+            "Baggage access in-flight"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=800&q=80",
+        "hourly_rate_usd": "4200.00",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.aircraft",
+    "pk": 2,
+    "fields": {
+        "name": "Embraer Phenom 300E",
+        "model": "Phenom 300E",
+        "category": "light",
+        "passenger_capacity": 7,
+        "range_km": 3650,
+        "cruise_speed_kmh": 834,
+        "description": "World's best-selling light jet for over a decade. The 300E combines stunning interior design with performance that rivals midsize jets, including the fastest speed in its class.",
+        "amenities": [
+            "HD entertainment",
+            "WiFi",
+            "Dual-zone temperature control",
+            "Enclosed lavatory",
+            "Full leather interior"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1474302770737-173ee21bab63?w=800&q=80",
+        "hourly_rate_usd": "4800.00",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.aircraft",
+    "pk": 3,
+    "fields": {
+        "name": "HondaJet Elite II",
+        "model": "HondaJet Elite II",
+        "category": "light",
+        "passenger_capacity": 6,
+        "range_km": 2661,
+        "cruise_speed_kmh": 782,
+        "description": "Honda's revolutionary over-the-wing engine mount design delivers the quietest, most fuel-efficient cabin in the light jet segment, with a surprisingly spacious interior.",
+        "amenities": [
+            "Quietest cabin in class",
+            "Refreshment center",
+            "Lavatory",
+            "Leather seating",
+            "WiFi"
+        ],
+        "image_url": "https://www.ainonline.com/cdn-cgi/image/width=3840,format=webp,quality=95/https://backend.ainonline.com/sites/default/files/styles/fpsc_1200x630/public/uploads/2023/05/5dwm2033web.jpg?h=95ffb99b&itok=",
+        "hourly_rate_usd": "3800.00",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.aircraft",
+    "pk": 4,
+    "fields": {
+        "name": "Pilatus PC-24",
+        "model": "PC-24 Super Versatile Jet",
+        "category": "light",
+        "passenger_capacity": 10,
+        "range_km": 3580,
+        "cruise_speed_kmh": 815,
+        "description": "The world's first Super Versatile Jet. Can operate from unpaved, short, or high-altitude runways ù opening up destinations no other jet can reach ù while maintaining a premium cabin.",
+        "amenities": [
+            "Short runway capability",
+            "WiFi",
+            "Large cargo door",
+            "Club seating",
+            "Refreshment center"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1556388158-158ea5ccacbd?w=800&q=80",
+        "hourly_rate_usd": "5100.00",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.aircraft",
+    "pk": 5,
+    "fields": {
+        "name": "Hawker 900XP",
+        "model": "Hawker 900XP",
+        "category": "midsize",
+        "passenger_capacity": 9,
+        "range_km": 5190,
+        "cruise_speed_kmh": 841,
+        "description": "A British classic with the longest range in the midsize category. The 900XP's stand-up cabin, true galley, and separate lavatory make transatlantic positioning viable for a midsize aircraft.",
+        "amenities": [
+            "Stand-up cabin",
+            "Full galley",
+            "DVD entertainment",
+            "Enclosed lavatory",
+            "Separate crew area"
+        ],
+        "image_url": "https://execaireaviation.com/wp-content/uploads/2024/06/Hawker-900XP-Exterior-Front-1-copy-3-scaled.jpg",
+        "hourly_rate_usd": "6500.00",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.aircraft",
+    "pk": 6,
+    "fields": {
+        "name": "Cessna Citation Latitude",
+        "model": "Citation Latitude",
+        "category": "midsize",
+        "passenger_capacity": 9,
+        "range_km": 4630,
+        "cruise_speed_kmh": 851,
+        "description": "Designed from the ground up with passenger comfort as the priority. Features the widest and tallest cabin in its class, a true flat floor, and a fully enclosed aft lavatory with vanity.",
+        "amenities": [
+            "Widest cabin in class",
+            "Flat floor",
+            "WiFi",
+            "Full galley",
+            "Enclosed lavatory with vanity"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=800&q=80",
+        "hourly_rate_usd": "7000.00",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.aircraft",
+    "pk": 7,
+    "fields": {
+        "name": "Embraer Legacy 450",
+        "model": "Legacy 450",
+        "category": "midsize",
+        "passenger_capacity": 8,
+        "range_km": 4630,
+        "cruise_speed_kmh": 870,
+        "description": "Fly-by-wire technology in a midsize jet brings unmatched handling precision. The Legacy 450 offers stand-up headroom throughout, a full flat-bed configuration, and a revolutionary full cabin.",
+        "amenities": [
+            "Fly-by-wire",
+            "Full flat-bed seating",
+            "Stand-up cabin",
+            "WiFi",
+            "Enclosed lavatory"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1474302770737-173ee21bab63?w=800&q=80",
+        "hourly_rate_usd": "7200.00",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.aircraft",
+    "pk": 8,
+    "fields": {
+        "name": "Bombardier Challenger 350",
+        "model": "Challenger 350",
+        "category": "super_midsize",
+        "passenger_capacity": 10,
+        "range_km": 5926,
+        "cruise_speed_kmh": 870,
+        "description": "The market-defining super midsize jet. The Challenger 350 combines coast-to-coast nonstop capability with a remarkably wide cabin, best-in-class baggage, and industry-leading reliability.",
+        "amenities": [
+            "WiFi",
+            "Entertainment system",
+            "Full galley",
+            "Stand-up cabin",
+            "Enclosed lavatory",
+            "Club and lounge seating"
+        ],
+        "image_url": "https://images.aircharterservice.com/global/aircraft-guide/private-charter/bombardier-challenger-350.jpg",
+        "hourly_rate_usd": "9800.00",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.aircraft",
+    "pk": 9,
+    "fields": {
+        "name": "Gulfstream G280",
+        "model": "G280",
+        "category": "super_midsize",
+        "passenger_capacity": 10,
+        "range_km": 6667,
+        "cruise_speed_kmh": 900,
+        "description": "Gulfstream's entry into the super midsize market combines the brand's legendary aviation DNA with a cabin that sets the benchmark. The longest range in its class enables unprecedented nonstop routes.",
+        "amenities": [
+            "Gulfstream cabin air quality",
+            "WiFi",
+            "Advanced avionics",
+            "Full galley",
+            "Enclosed lavatory"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1556388158-158ea5ccacbd?w=800&q=80",
+        "hourly_rate_usd": "10500.00",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.aircraft",
+    "pk": 10,
+    "fields": {
+        "name": "Dassault Falcon 2000LXS",
+        "model": "Falcon 2000LXS",
+        "category": "super_midsize",
+        "passenger_capacity": 10,
+        "range_km": 7408,
+        "cruise_speed_kmh": 870,
+        "description": "The Falcon 2000LXS is the only aircraft in its class capable of accessing demanding short-field airports like London City while delivering intercontinental range ù a truly unique capability.",
+        "amenities": [
+            "Short-field capability",
+            "EasyLink WiFi",
+            "Falcon Eye HUD",
+            "Full galley",
+            "Lounge configuration",
+            "DVD/entertainment"
+        ],
+        "image_url": "https://www.thejetbusiness.com/images/jets/399/399_exterior_1.jpg",
+        "hourly_rate_usd": "11000.00",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.aircraft",
+    "pk": 11,
+    "fields": {
+        "name": "Gulfstream G550",
+        "model": "G550",
+        "category": "heavy",
+        "passenger_capacity": 16,
+        "range_km": 12501,
+        "cruise_speed_kmh": 956,
+        "description": "One of the most trusted heavy jets ever built, the G550 has transported heads of state and business leaders around the globe for two decades. With 6,750 nm of range, it connects almost any city pair nonstop.",
+        "amenities": [
+            "PlaneView cockpit",
+            "WiFi",
+            "Full galley & crew rest",
+            "Master stateroom",
+            "Shower",
+            "3-zone cabin",
+            "Entertainment system"
+        ],
+        "image_url": "https://www.airpartner.com/media/amndvnfl/gulfstream-g550-exterior-1140x980.jpg",
+        "hourly_rate_usd": "13500.00",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.aircraft",
+    "pk": 12,
+    "fields": {
+        "name": "Bombardier Global 5500",
+        "model": "Global 5500",
+        "category": "heavy",
+        "passenger_capacity": 16,
+        "range_km": 9630,
+        "cruise_speed_kmh": 956,
+        "description": "Redesigned from the ground up with Bombardier's Nuage seating ù the most ergonomic seat in aviation history. The Global 5500 redefines cabin comfort at 51,000 ft.",
+        "amenities": [
+            "Nuage seating",
+            "Circadian lighting",
+            "Low cabin altitude (5,800 ft)",
+            "WiFi",
+            "Full galley",
+            "Master suite",
+            "3 living areas"
+        ],
+        "image_url": "https://i.insider.com/5f11e02d988ee3556b050aa3?width=1200&format=jpeg",
+        "hourly_rate_usd": "14000.00",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.aircraft",
+    "pk": 13,
+    "fields": {
+        "name": "Dassault Falcon 8X",
+        "model": "Falcon 8X",
+        "category": "heavy",
+        "passenger_capacity": 16,
+        "range_km": 11945,
+        "cruise_speed_kmh": 956,
+        "description": "Three engines. 11,450 km of range. The Falcon 8X connects Dubai to New York, London to Singapore, and virtually any global city pair while delivering the quiet refinement Dassault is celebrated for.",
+        "amenities": [
+            "Trijet reliability",
+            "30+ window configuration",
+            "FalconCabin WiFi",
+            "Master stateroom",
+            "Full galley",
+            "Lounge areas"
+        ],
+        "image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMGUWTxZRnrm7UGFfTuTRmPR8OQ-SeC_yNPQ&s",
+        "hourly_rate_usd": "15000.00",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.aircraft",
+    "pk": 14,
+    "fields": {
+        "name": "Boeing Business Jet 2 (BBJ2)",
+        "model": "Boeing BBJ2",
+        "category": "heavy",
+        "passenger_capacity": 25,
+        "range_km": 10000,
+        "cruise_speed_kmh": 956,
+        "description": "Based on the Next-Generation 737-800, the BBJ2 delivers airliner space in a private configuration. Fully customisable with bedrooms, offices, conference rooms, and a walk-in shower.",
+        "amenities": [
+            "Fully custom interior",
+            "Master bedroom",
+            "Walk-in shower",
+            "Conference room",
+            "Office",
+            "Galley",
+            "Lounge"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=800&q=80",
+        "hourly_rate_usd": "22000.00",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.aircraft",
+    "pk": 15,
+    "fields": {
+        "name": "Gulfstream G700",
+        "model": "G700",
+        "category": "ultra_long",
+        "passenger_capacity": 19,
+        "range_km": 13890,
+        "cruise_speed_kmh": 956,
+        "description": "Gulfstream's flagship ultra-long-range jet sets the new industry standard. The G700 features the largest cabin in its class with five living areas, full-stand-up headroom, and the most windows of any purpose-built bizjet.",
+        "amenities": [
+            "5 living areas",
+            "Master stateroom with shower",
+            "Ultra-Galley",
+            "Lowest cabin altitude (4,850 ft)",
+            "WiFi",
+            "Circadian lighting",
+            "16 panoramic windows per side"
+        ],
+        "image_url": "https://media.bizj.us/view/img/13056902/svbj-flexjet-010*900xx6048-3411-0-0.jpg",
+        "hourly_rate_usd": "21000.00",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.aircraft",
+    "pk": 16,
+    "fields": {
+        "name": "Bombardier Global 7500",
+        "model": "Global 7500",
+        "category": "ultra_long",
+        "passenger_capacity": 19,
+        "range_km": 14260,
+        "cruise_speed_kmh": 956,
+        "description": "The world's longest-range and largest purpose-built private jet. The Global 7500 holds the record for the longest nonstop bizjet flight ever completed and offers four true living spaces including a full master suite.",
+        "amenities": [
+            "4 living spaces",
+            "Full master suite",
+            "Dedicated crew suite",
+            "Full kitchen (not galley)",
+            "Nuage seating",
+            "WiFi",
+            "Smooth Flex Wing"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1556388158-158ea5ccacbd?w=800&q=80",
+        "hourly_rate_usd": "22000.00",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.aircraft",
+    "pk": 17,
+    "fields": {
+        "name": "Dassault Falcon 10X",
+        "model": "Falcon 10X",
+        "category": "ultra_long",
+        "passenger_capacity": 19,
+        "range_km": 15650,
+        "cruise_speed_kmh": 956,
+        "description": "Dassault's all-new ultra-widebody flagship redefines what's possible. The 10X offers the widest cabin in business aviation (with an airliner-class fuselage), connecting any two cities on Earth.",
+        "amenities": [
+            "Widest cabin in business aviation",
+            "4 cabin zones",
+            "Master suite with shower",
+            "Full galley",
+            "WiFi",
+            "Satellite phone",
+            "Advanced EASy III avionics"
+        ],
+        "image_url": "https://www.dc-aviation.com/fileadmin/user_upload/headerbild-falcon-2000lxs.jpeg",
+        "hourly_rate_usd": "23000.00",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.aircraft",
+    "pk": 18,
+    "fields": {
+        "name": "Airbus ACJ320neo",
+        "model": "ACJ320neo",
+        "category": "vip_airliner",
+        "passenger_capacity": 50,
+        "range_km": 11100,
+        "cruise_speed_kmh": 900,
+        "description": "Airbus's corporate jet derivative of the A320neo family. An ACJ320neo configured for VIP use is a flying mansion ù with floor plans that include bedrooms, bathrooms, conference rooms, a lounge, and a crew area.",
+        "amenities": [
+            "Fully bespoke interior",
+            "Multiple bedrooms",
+            "Conference room",
+            "Lounge",
+            "Full kitchen",
+            "Crew quarters",
+            "Satellite comms",
+            "WiFi"
+        ],
+        "image_url": "https://www.acj.airbus.com/sites/g/files/jlcbta131/files/2021-11/1st-ACJ320neo.jpg",
+        "hourly_rate_usd": "38000.00",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.aircraft",
+    "pk": 19,
+    "fields": {
+        "name": "Boeing ACJ 747-8",
+        "model": "ACJ 747-8 VIP",
+        "category": "vip_airliner",
+        "passenger_capacity": 120,
+        "range_km": 16300,
+        "cruise_speed_kmh": 988,
+        "description": "The ultimate expression of airborne luxury. A VIP-configured 747-8 offers 4,786 sq ft of cabin space over two decks ù enabling multiple master suites, a cinema, conference center, gym, and more.",
+        "amenities": [
+            "4,786 sq ft cabin",
+            "Multiple master suites",
+            "Cinema",
+            "Conference center",
+            "Gym",
+            "Full kitchen",
+            "Crew quarters for 20",
+            "Unlimited range"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=800&q=80",
+        "hourly_rate_usd": "75000.00",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.yacht",
+    "pk": 1,
+    "fields": {
+        "name": "Azure Lady",
+        "size_category": "small",
+        "length_meters": "22.50",
+        "guest_capacity": 6,
+        "crew_count": 3,
+        "description": "An elegant Azimut 72 with a sleek Italian design profile. Azure Lady features a full-beam master cabin, two guest staterooms, and a generous sundeck perfect for Balearic island-hopping.",
+        "amenities": [
+            "Jet ski",
+            "Paddleboards",
+            "Snorkeling gear",
+            "Sunpad",
+            "Outdoor dining",
+            "Air conditioning",
+            "Generator"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&q=80",
+        "daily_rate_usd": "12000.00",
+        "home_port": "Ibiza, Spain",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.yacht",
+    "pk": 2,
+    "fields": {
+        "name": "Bella Vita",
+        "size_category": "small",
+        "length_meters": "27.00",
+        "guest_capacity": 8,
+        "crew_count": 4,
+        "description": "A Sunseeker 88 Yacht combining sporty performance with elegant design. Bella Vita's open-plan main salon, wraparound seating, and three luxurious staterooms make her ideal for Aegean adventures.",
+        "amenities": [
+            "Tender with outboard",
+            "Water skis",
+            "Snorkeling equipment",
+            "BBQ",
+            "Sunpads",
+            "Satellite TV",
+            "WiFi"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1516132006923-4e4985a94ddb?w=800&q=80",
+        "daily_rate_usd": "16500.00",
+        "home_port": "Mykonos, Greece",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.yacht",
+    "pk": 3,
+    "fields": {
+        "name": "Dolce Mare",
+        "size_category": "small",
+        "length_meters": "28.50",
+        "guest_capacity": 8,
+        "crew_count": 4,
+        "description": "A Ferretti 920 with a flowing Italian interior by Studio Zuccon. Dolce Mare offers three cabins, a spacious salon, and exceptional stability for the Ligurian and Tyrrhenian coasts.",
+        "amenities": [
+            "Seabob",
+            "Paddleboards",
+            "Fishing equipment",
+            "Espresso machine",
+            "Outdoor dining for 8",
+            "WiFi",
+            "Air conditioning"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&q=80",
+        "daily_rate_usd": "18000.00",
+        "home_port": "Portofino, Italy",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.yacht",
+    "pk": 4,
+    "fields": {
+        "name": "Serenity Now",
+        "size_category": "medium",
+        "length_meters": "38.00",
+        "guest_capacity": 10,
+        "crew_count": 7,
+        "description": "A Benetti 37m with a warm Tuscan interior featuring oak and marble throughout. Serenity Now accommodates 10 guests in five lavish staterooms with a master full-beam suite on the main deck.",
+        "amenities": [
+            "15-ft tender",
+            "Two jet skis",
+            "Seabobs",
+            "Paddleboards",
+            "Kayaks",
+            "Diving equipment",
+            "Gym",
+            "WiFi",
+            "Satellite TV",
+            "Climate control"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1580541631950-7282082b53ce?w=800&q=80",
+        "daily_rate_usd": "42000.00",
+        "home_port": "Monaco",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.yacht",
+    "pk": 5,
+    "fields": {
+        "name": "Altitude",
+        "size_category": "medium",
+        "length_meters": "43.50",
+        "guest_capacity": 10,
+        "crew_count": 8,
+        "description": "A striking Sunseeker 44m with a modern Scandinavian-inspired interior. Altitude's voluminous upper saloon, fold-down beach club, and 5 staterooms make her one of the most requested yachts in the Western Med.",
+        "amenities": [
+            "Beach club with swim platform",
+            "Tender garage",
+            "Two jet skis",
+            "Seabob",
+            "Flyboard",
+            "Onboard gym",
+            "Jacuzzi",
+            "WiFi",
+            "Stabilizers"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1516132006923-4e4985a94ddb?w=800&q=80",
+        "daily_rate_usd": "55000.00",
+        "home_port": "Palma de Mallorca, Spain",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.yacht",
+    "pk": 6,
+    "fields": {
+        "name": "Northern Star",
+        "size_category": "medium",
+        "length_meters": "47.00",
+        "guest_capacity": 12,
+        "crew_count": 9,
+        "description": "A classic Feadship 47m blending the Dutch builder's legendary construction quality with a warm, contemporary interior. Northern Star's steel hull provides exceptional seakeeping for Adriatic islands.",
+        "amenities": [
+            "Stabilizers at anchor",
+            "18-ft custom tender",
+            "Diving setup",
+            "Two jet skis",
+            "Kayaks",
+            "Sauna",
+            "Jacuzzi",
+            "WiFi",
+            "Entertainment system"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&q=80",
+        "daily_rate_usd": "68000.00",
+        "home_port": "Dubrovnik, Croatia",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.yacht",
+    "pk": 7,
+    "fields": {
+        "name": "Lady Sovereign",
+        "size_category": "large",
+        "length_meters": "58.00",
+        "guest_capacity": 12,
+        "crew_count": 14,
+        "description": "An iconic Lurssen 58m combining German engineering precision with a palatial interior by Reymond Langton. Lady Sovereign's volume belies her elegant profile ù the main salon alone measures over 80 sq metres.",
+        "amenities": [
+            "Full beach club",
+            "Jacuzzi on deck",
+            "Gymnasium",
+            "Tender garage with 26-ft tender",
+            "Three jet skis",
+            "Seabobs",
+            "Zero-speed stabilisers",
+            "WiFi",
+            "Satellite comms",
+            "Wine cellar"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1580541631950-7282082b53ce?w=800&q=80",
+        "daily_rate_usd": "115000.00",
+        "home_port": "Antibes, France",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.yacht",
+    "pk": 8,
+    "fields": {
+        "name": "Aqua Blu",
+        "size_category": "large",
+        "length_meters": "62.00",
+        "guest_capacity": 16,
+        "crew_count": 15,
+        "description": "A purpose-built expedition superyacht by Damen with ice-class capabilities. Aqua Blu carries a fleet of water toys and a submersible, making her ideal for remote destinations from the Maldives to Antarctica.",
+        "amenities": [
+            "Submarine",
+            "Three dive compressors",
+            "Full dive gear",
+            "Multiple tenders",
+            "Helicopter pad (H2)",
+            "Jacuzzi",
+            "Gym",
+            "Sauna",
+            "WiFi",
+            "Stabilisers"
+        ],
+        "image_url": "https://www.cruisemapper.com/images/ships/1645-43e816757a9.jpg",
+        "daily_rate_usd": "135000.00",
+        "home_port": "Fort Lauderdale, USA",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.yacht",
+    "pk": 9,
+    "fields": {
+        "name": "Titan",
+        "size_category": "large",
+        "length_meters": "73.00",
+        "guest_capacity": 12,
+        "crew_count": 20,
+        "description": "A Feadship 73m masterpiece characterised by her low-profile exterior and extraordinary interior volume. Titan's guest-to-crew ratio of 1:1.7 ensures impeccable service for up to 12 guests across 5 suites.",
+        "amenities": [
+            "Beach club with infinity pool",
+            "Submersible",
+            "Four tenders",
+            "Multiple jet skis",
+            "Helideck",
+            "Gymnasium",
+            "Cinema room",
+            "Wine cellar",
+            "Spa with sauna",
+            "Zero-speed stabilisers"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&q=80",
+        "daily_rate_usd": "165000.00",
+        "home_port": "Dubai, UAE",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.yacht",
+    "pk": 10,
+    "fields": {
+        "name": "Jubilee",
+        "size_category": "superyacht",
+        "length_meters": "110.00",
+        "guest_capacity": 28,
+        "crew_count": 35,
+        "description": "A Oceanco 110m superyacht inspired by ancient Greek architecture, featuring six decks of meticulously crafted spaces. Jubilee's interior by Lobanov Studio blends classical antiquity with contemporary luxury across an astounding 2,600 GRT.",
+        "amenities": [
+            "Swimming pool",
+            "Two Jacuzzis",
+            "Cinema",
+            "Beach club",
+            "Helipad",
+            "Gymnasium with spa",
+            "Submersible",
+            "Dive centre",
+            "Multiple tenders",
+            "Zero-speed stabilisers",
+            "WiFi & satellite comms",
+            "Wine cellar",
+            "Owner's and VIP decks"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1580541631950-7282082b53ce?w=800&q=80",
+        "daily_rate_usd": "450000.00",
+        "home_port": "Monaco",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.yacht",
+    "pk": 11,
+    "fields": {
+        "name": "Blue Ice",
+        "size_category": "superyacht",
+        "length_meters": "85.00",
+        "guest_capacity": 12,
+        "crew_count": 25,
+        "description": "An ice-class Lurssen 85m expedition superyacht capable of navigating the Northwest Passage, Greenland, and Antarctica. Blue Ice marries rugged capability with world-class luxury across 5 decks.",
+        "amenities": [
+            "Ice-class hull",
+            "Helipad with hangar",
+            "Submersible",
+            "RHIB tenders",
+            "Complete dive centre",
+            "Research lab",
+            "Spa and sauna",
+            "Cinema",
+            "Zero-speed stabilisers",
+            "Satellite internet"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1516132006923-4e4985a94ddb?w=800&q=80",
+        "daily_rate_usd": "280000.00",
+        "home_port": "Bergen, Norway",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.yacht",
+    "pk": 12,
+    "fields": {
+        "name": "Ocean Emerald",
+        "size_category": "superyacht",
+        "length_meters": "92.00",
+        "guest_capacity": 18,
+        "crew_count": 28,
+        "description": "A Feadship 92m distinguished by her striking steel-blue hull and interiors by Alberto Pinto. Ocean Emerald's nine guest suites, sky lounge, and spectacular beach club have made her a fixture of the Med season.",
+        "amenities": [
+            "Sky lounge",
+            "Main pool with bar",
+            "Beach club spa",
+            "Cinema",
+            "Fully equipped gym",
+            "Three tenders",
+            "Two jet skis",
+            "Seabobs",
+            "Full dive centre",
+            "Helipad",
+            "Stabilisers",
+            "Satellite comms"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=800&q=80",
+        "daily_rate_usd": "320000.00",
+        "home_port": "Antibes, France",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.yacht",
+    "pk": 13,
+    "fields": {
+        "name": "Lady Christine",
+        "size_category": "superyacht",
+        "length_meters": "130.00",
+        "guest_capacity": 26,
+        "crew_count": 42,
+        "description": "One of the world's most celebrated charter superyachts ù a 130m Lⁿrssen with seven decks and interiors by RWD. Lady Christine has circumnavigated the globe multiple times and can accommodate 26 guests across 13 suites.",
+        "amenities": [
+            "Infinity pool",
+            "Beach club",
+            "Spa and beauty salon",
+            "Cinema for 20",
+            "Two helipads",
+            "Submarine",
+            "Dive centre",
+            "Multiple tenders + jet skis",
+            "Fully equipped gym",
+            "Owner's deck with private pool",
+            "Zero-speed stabilisers"
+        ],
+        "image_url": "https://images.unsplash.com/photo-1580541631950-7282082b53ce?w=800&q=80",
+        "daily_rate_usd": "620000.00",
+        "home_port": "Nassau, Bahamas",
+        "is_available": true
+    }
+},
+{
+    "model": "flights.flightbooking",
+    "pk": 1,
+    "fields": {
+        "reference": "bbcc9e7c-c765-4168-9f6a-abf5d0cb8e9a",
+        "guest_name": "Jacob Juma",
+        "guest_email": "jacobjuma@gmail.com",
+        "guest_phone": "0757790873",
+        "company": "Coca cola",
+        "trip_type": "one_way",
+        "origin": 27,
+        "destination": 21,
+        "departure_date": "2026-02-25",
+        "departure_time": "03:10:00",
+        "return_date": null,
+        "passenger_count": 1,
+        "aircraft": null,
+        "special_requests": "Inflight catering",
+        "catering_requested": false,
+        "ground_transport_requested": false,
+        "concierge_requested": false,
+        "quoted_price_usd": "780000.00",
+        "status": "confirmed",
+        "created_at": "2026-02-23T21:07:25.786Z",
+        "updated_at": "2026-02-23T21:09:51.383Z"
+    }
+},
+{
+    "model": "flights.flightbooking",
+    "pk": 2,
+    "fields": {
+        "reference": "049cde14-da07-4fba-a519-7412b701cdb6",
+        "guest_name": "Jane Mary",
+        "guest_email": "janemary@gmail.com",
+        "guest_phone": "254112284902",
+        "company": "",
+        "trip_type": "one_way",
+        "origin": 71,
+        "destination": 48,
+        "departure_date": "2026-02-25",
+        "departure_time": "02:30:00",
+        "return_date": null,
+        "passenger_count": 1,
+        "aircraft": 11,
+        "special_requests": "none",
+        "catering_requested": true,
+        "ground_transport_requested": false,
+        "concierge_requested": false,
+        "quoted_price_usd": null,
+        "status": "inquiry",
+        "created_at": "2026-02-23T21:27:51.812Z",
+        "updated_at": "2026-02-23T21:27:51.812Z"
+    }
+},
+{
+    "model": "flights.flightbooking",
+    "pk": 3,
+    "fields": {
+        "reference": "139c917b-b4de-4621-a477-9c71a8b59acf",
+        "guest_name": "Akoko Valarine",
+        "guest_email": "akokval@gmail.com",
+        "guest_phone": "254736767263",
+        "company": "",
+        "trip_type": "one_way",
+        "origin": 69,
+        "destination": 62,
+        "departure_date": "2026-02-25",
+        "departure_time": "03:42:00",
+        "return_date": null,
+        "passenger_count": 1,
+        "aircraft": 11,
+        "special_requests": "In flight catering",
+        "catering_requested": false,
+        "ground_transport_requested": false,
+        "concierge_requested": false,
+        "quoted_price_usd": null,
+        "status": "inquiry",
+        "created_at": "2026-02-23T21:38:49.309Z",
+        "updated_at": "2026-02-23T21:38:49.309Z"
+    }
+},
+{
+    "model": "flights.yachtcharter",
+    "pk": 1,
+    "fields": {
+        "reference": "7b18e6f8-8f02-4b10-a635-73b5d7f1a120",
+        "guest_name": "Mike Mudachi",
+        "guest_email": "mikemudathie@gmail.com",
+        "guest_phone": "07467386872",
+        "company": "",
+        "yacht": 7,
+        "departure_port": "Miami",
+        "destination_port": "Mombasa",
+        "charter_start": "2026-02-25",
+        "charter_end": "2026-03-10",
+        "guest_count": 12,
+        "itinerary_description": "water sports",
+        "special_requests": "celebrations",
+        "quoted_price_usd": null,
+        "status": "inquiry",
+        "created_at": "2026-02-23T21:40:25.007Z",
+        "updated_at": "2026-02-23T21:40:25.007Z"
+    }
+},
+{
+    "model": "flights.yachtcharter",
+    "pk": 2,
+    "fields": {
+        "reference": "fdaeb8e6-e07b-49f5-b011-23810fc2d85b",
+        "guest_name": "Mohammed",
+        "guest_email": "Naserr@gmail.com",
+        "guest_phone": "254959983202",
+        "company": "",
+        "yacht": 7,
+        "departure_port": "Nyali",
+        "destination_port": "Shanzu",
+        "charter_start": "2026-02-25",
+        "charter_end": "2026-03-05",
+        "guest_count": 1,
+        "itinerary_description": "None",
+        "special_requests": "None",
+        "quoted_price_usd": null,
+        "status": "inquiry",
+        "created_at": "2026-02-23T22:05:54.287Z",
+        "updated_at": "2026-02-23T22:05:54.288Z"
+    }
+},
+{
+    "model": "flights.leaseinquiry",
+    "pk": 1,
+    "fields": {
+        "reference": "f719c317-b7a7-41b8-8296-71c67fbfaca1",
+        "guest_name": "Benson Koko",
+        "guest_email": "bensonkoko@gmail.com",
+        "guest_phone": "0757790983",
+        "company": "Safaricom",
+        "asset_type": "aircraft",
+        "aircraft": null,
+        "yacht": null,
+        "lease_duration": "multi_year",
+        "preferred_start_date": "2026-02-25",
+        "budget_range": "50 USD",
+        "usage_description": "Nairobi to mombasa",
+        "additional_notes": "None",
+        "status": "pending",
+        "created_at": "2026-02-23T21:04:58.812Z"
+    }
+},
+{
+    "model": "flights.contactinquiry",
+    "pk": 1,
+    "fields": {
+        "reference": "aedba113-0eb0-4472-8c29-1f7fd1daf1e3",
+        "full_name": "Steve Ongera",
+        "email": "steveongera@gmail.com",
+        "phone": "254112298387",
+        "company": "N/A",
+        "subject": "careers",
+        "message": "Attachment inquiry",
+        "created_at": "2026-02-24T10:08:53.654Z"
+    }
+},
+{
+    "model": "flights.groupcharterinquiry",
+    "pk": 1,
+    "fields": {
+        "reference": "119a53c3-6647-420c-abec-99a5aed363e0",
+        "contact_name": "Maina  Njenga",
+        "email": "maina@gmail.com",
+        "phone": "25478264573",
+        "company": "N/A",
+        "group_type": "corporate",
+        "group_size": 16,
+        "origin_description": "Nairobi",
+        "destination_description": "Malindi",
+        "departure_date": "2026-02-26",
+        "return_date": null,
+        "is_round_trip": false,
+        "preferred_aircraft_category": "ultra_long",
+        "catering_required": true,
+        "ground_transport_required": true,
+        "budget_range": "1400000",
+        "additional_notes": "",
+        "status": "pending",
+        "created_at": "2026-02-24T10:07:34.992Z"
+    }
+},
+{
+    "model": "flights.aircargoinquiry",
+    "pk": 1,
+    "fields": {
+        "reference": "78cd1122-7537-4d97-bbb2-be6089022544",
+        "contact_name": "Kimani Ichungwa",
+        "email": "kimaniichungwa@gmail.com",
+        "phone": "25472773678",
+        "company": "N/A",
+        "cargo_type": "pharma",
+        "cargo_description": "I want to ship military medicine higly flammable from Nairobi kenya to Pakistan",
+        "weight_kg": "450.00",
+        "volume_m3": "2.80",
+        "dimensions": "120 x 670",
+        "origin_description": "Nairobi",
+        "destination_description": "Pakistan",
+        "pickup_date": "2026-02-27",
+        "urgency": "express",
+        "is_hazardous": true,
+        "requires_temperature_control": true,
+        "insurance_required": false,
+        "customs_assistance_needed": false,
+        "additional_notes": "N/A",
+        "status": "pending",
+        "created_at": "2026-02-24T10:11:22.274Z"
+    }
+},
+{
+    "model": "flights.aircraftsalesinquiry",
+    "pk": 1,
+    "fields": {
+        "reference": "a26d4c0f-f78c-4241-8aae-68f69a1d4d64",
+        "contact_name": "Abdi Malik sumeha",
+        "email": "abdi@gmail.com",
+        "phone": "254176526783",
+        "company": "N/A",
+        "inquiry_type": "buy",
+        "preferred_category": "light",
+        "preferred_make_model": "Gulfstream",
+        "budget_range": "under_2m",
+        "new_or_pre_owned": "new",
+        "aircraft_make": "",
+        "aircraft_model": "",
+        "year_of_manufacture": null,
+        "serial_number": "",
+        "total_flight_hours": null,
+        "asking_price_usd": null,
+        "message": "N/A",
+        "status": "pending",
+        "created_at": "2026-02-24T10:13:16.773Z"
+    }
+}
+]
+
