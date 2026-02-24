@@ -5,7 +5,8 @@ from django.utils import timezone
 from .models import (
     Airport, Aircraft, Yacht,
     FlightBooking, FlightLeg,
-    YachtCharter, LeaseInquiry, FlightInquiry
+    YachtCharter, LeaseInquiry, FlightInquiry,
+    ContactInquiry, GroupCharterInquiry, AirCargoInquiry, AircraftSalesInquiry  # ← add this line
 )
 
 admin.site.site_header = "✈  VistaJets Admin"
@@ -543,3 +544,460 @@ class FlightInquiryAdmin(admin.ModelAdmin):
             '<strong>{}</strong> <span style="color:#C9A84C;">→</span> <strong>{}</strong>',
             origin[:25], dest[:25]
         )
+        
+        
+        
+# ── ADD to the import at the top of admin.py ──────────────────────────────────
+# from .models import (
+#     ...existing...,
+#     ContactInquiry, GroupCharterInquiry, AirCargoInquiry, AircraftSalesInquiry
+# )
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# CONTACT INQUIRY
+# ──────────────────────────────────────────────────────────────────────────────
+@admin.register(ContactInquiry)
+class ContactInquiryAdmin(admin.ModelAdmin):
+    list_display = (
+        "short_reference", "full_name", "email", "phone",
+        "company", "subject_badge", "created_at"
+    )
+    list_filter = (
+        "subject",
+        ("created_at", admin.DateFieldListFilter),
+    )
+    search_fields = ("full_name", "email", "company", "reference")
+    ordering = ("-created_at",)
+    readonly_fields = ("reference", "created_at")
+    list_per_page = 25
+
+    fieldsets = (
+        ("Reference", {
+            "fields": ("reference",)
+        }),
+        ("Contact", {
+            "fields": (
+                ("full_name", "email"),
+                ("phone", "company"),
+            )
+        }),
+        ("Message", {
+            "fields": ("subject", "message")
+        }),
+        ("Timestamps", {
+            "fields": ("created_at",),
+            "classes": ("collapse",),
+        }),
+    )
+
+    @admin.display(description="Reference")
+    def short_reference(self, obj):
+        ref = str(obj.reference)
+        return format_html(
+            '<span title="{}" style="font-family:monospace;font-size:11px;">{}</span>',
+            ref, ref[:8] + "…"
+        )
+
+    @admin.display(description="Subject")
+    def subject_badge(self, obj):
+        colours = {
+            "general":     "#6CB4E4",
+            "support":     "#E09F3E",
+            "media":       "#9B59B6",
+            "partnership": "#5BA55B",
+            "careers":     "#C9A84C",
+            "other":       "#888",
+        }
+        colour = colours.get(obj.subject, "#888")
+        return format_html(
+            '<span style="background:{};color:#fff;padding:2px 8px;'
+            'border-radius:3px;font-size:11px;font-weight:600;">{}</span>',
+            colour, obj.get_subject_display()
+        )
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# GROUP CHARTER INQUIRY
+# ──────────────────────────────────────────────────────────────────────────────
+@admin.register(GroupCharterInquiry)
+class GroupCharterInquiryAdmin(admin.ModelAdmin):
+    list_display = (
+        "short_reference", "contact_name", "email",
+        "group_type_badge", "group_size", "route_summary",
+        "departure_date", "status_badge", "created_at"
+    )
+    list_filter = (
+        "group_type", "status", "is_round_trip",
+        "catering_required", "ground_transport_required",
+        ("departure_date", admin.DateFieldListFilter),
+    )
+    search_fields = ("contact_name", "email", "company", "reference",
+                     "origin_description", "destination_description")
+    ordering = ("-created_at",)
+    readonly_fields = ("reference", "created_at")
+    list_per_page = 25
+
+    fieldsets = (
+        ("Reference", {
+            "fields": ("reference", "status")
+        }),
+        ("Contact", {
+            "fields": (
+                ("contact_name", "email"),
+                ("phone", "company"),
+            )
+        }),
+        ("Group Details", {
+            "fields": (
+                ("group_type", "group_size"),
+            )
+        }),
+        ("Flight Details", {
+            "fields": (
+                ("origin_description", "destination_description"),
+                ("departure_date", "return_date"),
+                "is_round_trip",
+                "preferred_aircraft_category",
+            )
+        }),
+        ("Add-ons", {
+            "fields": (
+                ("catering_required", "ground_transport_required"),
+                "budget_range",
+            )
+        }),
+        ("Notes", {
+            "fields": ("additional_notes",),
+            "classes": ("collapse",),
+        }),
+        ("Timestamps", {
+            "fields": ("created_at",),
+            "classes": ("collapse",),
+        }),
+    )
+
+    actions = ["mark_pending", "mark_contacted", "mark_completed"]
+
+    @admin.display(description="Reference")
+    def short_reference(self, obj):
+        ref = str(obj.reference)
+        return format_html(
+            '<span title="{}" style="font-family:monospace;font-size:11px;">{}</span>',
+            ref, ref[:8] + "…"
+        )
+
+    @admin.display(description="Group Type")
+    def group_type_badge(self, obj):
+        colours = {
+            "corporate":     "#6CB4E4",
+            "sports_team":   "#5BA55B",
+            "entertainment": "#9B59B6",
+            "incentive":     "#E09F3E",
+            "wedding":       "#E05252",
+            "government":    "#C9A84C",
+            "other":         "#888",
+        }
+        colour = colours.get(obj.group_type, "#888")
+        return format_html(
+            '<span style="background:{};color:#fff;padding:2px 8px;'
+            'border-radius:3px;font-size:11px;font-weight:600;">{}</span>',
+            colour, obj.get_group_type_display()
+        )
+
+    @admin.display(description="Route")
+    def route_summary(self, obj):
+        origin = obj.origin_description or "—"
+        dest   = obj.destination_description or "—"
+        return format_html(
+            '<strong>{}</strong> <span style="color:#C9A84C;">→</span> <strong>{}</strong>',
+            origin[:20], dest[:20]
+        )
+
+    @admin.display(description="Status")
+    def status_badge(self, obj):
+        colour = "#C9A84C" if obj.status == "pending" else "#50C878"
+        return format_html(
+            '<span style="background:{};color:#fff;padding:2px 8px;'
+            'border-radius:3px;font-size:11px;font-weight:600;">{}</span>',
+            colour, obj.status.title()
+        )
+
+    @admin.action(description="Mark selected as Pending")
+    def mark_pending(self, request, queryset):
+        updated = queryset.update(status="pending")
+        self.message_user(request, f"{updated} inquiry(s) marked as Pending.")
+
+    @admin.action(description="Mark selected as Contacted")
+    def mark_contacted(self, request, queryset):
+        updated = queryset.update(status="contacted")
+        self.message_user(request, f"{updated} inquiry(s) marked as Contacted.")
+
+    @admin.action(description="Mark selected as Completed")
+    def mark_completed(self, request, queryset):
+        updated = queryset.update(status="completed")
+        self.message_user(request, f"{updated} inquiry(s) marked as Completed.")
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# AIR CARGO INQUIRY
+# ──────────────────────────────────────────────────────────────────────────────
+@admin.register(AirCargoInquiry)
+class AirCargoInquiryAdmin(admin.ModelAdmin):
+    list_display = (
+        "short_reference", "contact_name", "email", "company",
+        "cargo_type_badge", "route_summary", "urgency_badge",
+        "weight_kg", "status_badge", "created_at"
+    )
+    list_filter = (
+        "cargo_type", "urgency", "status",
+        "is_hazardous", "requires_temperature_control",
+        "insurance_required", "customs_assistance_needed",
+        ("pickup_date", admin.DateFieldListFilter),
+    )
+    search_fields = ("contact_name", "email", "company", "reference",
+                     "origin_description", "destination_description", "cargo_description")
+    ordering = ("-created_at",)
+    readonly_fields = ("reference", "created_at")
+    list_per_page = 25
+
+    fieldsets = (
+        ("Reference", {
+            "fields": ("reference", "status")
+        }),
+        ("Contact", {
+            "fields": (
+                ("contact_name", "email"),
+                ("phone", "company"),
+            )
+        }),
+        ("Cargo Details", {
+            "fields": (
+                ("cargo_type", "urgency"),
+                "cargo_description",
+                ("weight_kg", "volume_m3", "dimensions"),
+            )
+        }),
+        ("Route & Timeline", {
+            "fields": (
+                ("origin_description", "destination_description"),
+                "pickup_date",
+            )
+        }),
+        ("Special Handling", {
+            "fields": (
+                ("is_hazardous", "requires_temperature_control"),
+                ("insurance_required", "customs_assistance_needed"),
+            )
+        }),
+        ("Notes", {
+            "fields": ("additional_notes",),
+            "classes": ("collapse",),
+        }),
+        ("Timestamps", {
+            "fields": ("created_at",),
+            "classes": ("collapse",),
+        }),
+    )
+
+    actions = ["mark_pending", "mark_contacted", "mark_completed"]
+
+    @admin.display(description="Reference")
+    def short_reference(self, obj):
+        ref = str(obj.reference)
+        return format_html(
+            '<span title="{}" style="font-family:monospace;font-size:11px;">{}</span>',
+            ref, ref[:8] + "…"
+        )
+
+    @admin.display(description="Cargo Type")
+    def cargo_type_badge(self, obj):
+        colours = {
+            "general":         "#6CB4E4",
+            "perishables":     "#5BA55B",
+            "pharma":          "#9B59B6",
+            "dangerous_goods": "#E05252",
+            "live_animals":    "#E09F3E",
+            "artwork":         "#C9A84C",
+            "automotive":      "#888",
+            "oversized":       "#555",
+            "humanitarian":    "#50C878",
+            "other":           "#aaa",
+        }
+        colour = colours.get(obj.cargo_type, "#888")
+        return format_html(
+            '<span style="background:{};color:#fff;padding:2px 8px;'
+            'border-radius:3px;font-size:11px;font-weight:600;">{}</span>',
+            colour, obj.get_cargo_type_display()
+        )
+
+    @admin.display(description="Route")
+    def route_summary(self, obj):
+        origin = obj.origin_description or "—"
+        dest   = obj.destination_description or "—"
+        return format_html(
+            '<strong>{}</strong> <span style="color:#C9A84C;">→</span> <strong>{}</strong>',
+            origin[:18], dest[:18]
+        )
+
+    @admin.display(description="Urgency")
+    def urgency_badge(self, obj):
+        colours = {
+            "standard": "#6CB4E4",
+            "express":  "#E09F3E",
+            "critical": "#E05252",
+        }
+        colour = colours.get(obj.urgency, "#888")
+        return format_html(
+            '<span style="background:{};color:#fff;padding:2px 8px;'
+            'border-radius:3px;font-size:11px;font-weight:600;">{}</span>',
+            colour, obj.get_urgency_display()
+        )
+
+    @admin.display(description="Status")
+    def status_badge(self, obj):
+        colour = "#C9A84C" if obj.status == "pending" else "#50C878"
+        return format_html(
+            '<span style="background:{};color:#fff;padding:2px 8px;'
+            'border-radius:3px;font-size:11px;font-weight:600;">{}</span>',
+            colour, obj.status.title()
+        )
+
+    @admin.action(description="Mark selected as Pending")
+    def mark_pending(self, request, queryset):
+        updated = queryset.update(status="pending")
+        self.message_user(request, f"{updated} inquiry(s) marked as Pending.")
+
+    @admin.action(description="Mark selected as Contacted")
+    def mark_contacted(self, request, queryset):
+        updated = queryset.update(status="contacted")
+        self.message_user(request, f"{updated} inquiry(s) marked as Contacted.")
+
+    @admin.action(description="Mark selected as Completed")
+    def mark_completed(self, request, queryset):
+        updated = queryset.update(status="completed")
+        self.message_user(request, f"{updated} inquiry(s) marked as Completed.")
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# AIRCRAFT SALES INQUIRY
+# ──────────────────────────────────────────────────────────────────────────────
+@admin.register(AircraftSalesInquiry)
+class AircraftSalesInquiryAdmin(admin.ModelAdmin):
+    list_display = (
+        "short_reference", "contact_name", "email", "company",
+        "inquiry_type_badge", "aircraft_summary",
+        "budget_range", "status_badge", "created_at"
+    )
+    list_filter = (
+        "inquiry_type", "status", "new_or_pre_owned",
+        "preferred_category", "budget_range",
+        ("created_at", admin.DateFieldListFilter),
+    )
+    search_fields = ("contact_name", "email", "company", "reference",
+                     "aircraft_make", "aircraft_model", "serial_number")
+    ordering = ("-created_at",)
+    readonly_fields = ("reference", "created_at")
+    list_per_page = 25
+
+    fieldsets = (
+        ("Reference", {
+            "fields": ("reference", "status")
+        }),
+        ("Contact", {
+            "fields": (
+                ("contact_name", "email"),
+                ("phone", "company"),
+            )
+        }),
+        ("Inquiry Type", {
+            "fields": ("inquiry_type",)
+        }),
+        ("Buyer Requirements", {
+            "fields": (
+                ("preferred_category", "preferred_make_model"),
+                ("budget_range", "new_or_pre_owned"),
+            ),
+            "classes": ("collapse",),
+        }),
+        ("Seller / Trade Details", {
+            "fields": (
+                ("aircraft_make", "aircraft_model"),
+                ("year_of_manufacture", "serial_number"),
+                ("total_flight_hours", "asking_price_usd"),
+            ),
+            "classes": ("collapse",),
+        }),
+        ("Message", {
+            "fields": ("message",),
+            "classes": ("collapse",),
+        }),
+        ("Timestamps", {
+            "fields": ("created_at",),
+            "classes": ("collapse",),
+        }),
+    )
+
+    actions = ["mark_pending", "mark_contacted", "mark_completed"]
+
+    @admin.display(description="Reference")
+    def short_reference(self, obj):
+        ref = str(obj.reference)
+        return format_html(
+            '<span title="{}" style="font-family:monospace;font-size:11px;">{}</span>',
+            ref, ref[:8] + "…"
+        )
+
+    @admin.display(description="Inquiry Type")
+    def inquiry_type_badge(self, obj):
+        colours = {
+            "buy":       "#50C878",
+            "sell":      "#6CB4E4",
+            "trade":     "#E09F3E",
+            "valuation": "#9B59B6",
+        }
+        colour = colours.get(obj.inquiry_type, "#888")
+        return format_html(
+            '<span style="background:{};color:#fff;padding:2px 8px;'
+            'border-radius:3px;font-size:11px;font-weight:600;">{}</span>',
+            colour, obj.get_inquiry_type_display()
+        )
+
+    @admin.display(description="Aircraft")
+    def aircraft_summary(self, obj):
+        if obj.aircraft_make and obj.aircraft_model:
+            year = f" ({obj.year_of_manufacture})" if obj.year_of_manufacture else ""
+            return format_html(
+                '<strong>{} {}</strong><span style="color:#888;font-size:11px;">{}</span>',
+                obj.aircraft_make, obj.aircraft_model, year
+            )
+        if obj.preferred_make_model:
+            return format_html(
+                '<span style="color:#888;">Seeking: {}</span>',
+                obj.preferred_make_model
+            )
+        return format_html('<span style="color:#aaa;">—</span>')
+
+    @admin.display(description="Status")
+    def status_badge(self, obj):
+        colour = "#C9A84C" if obj.status == "pending" else "#50C878"
+        return format_html(
+            '<span style="background:{};color:#fff;padding:2px 8px;'
+            'border-radius:3px;font-size:11px;font-weight:600;">{}</span>',
+            colour, obj.status.title()
+        )
+
+    @admin.action(description="Mark selected as Pending")
+    def mark_pending(self, request, queryset):
+        updated = queryset.update(status="pending")
+        self.message_user(request, f"{updated} inquiry(s) marked as Pending.")
+
+    @admin.action(description="Mark selected as Contacted")
+    def mark_contacted(self, request, queryset):
+        updated = queryset.update(status="contacted")
+        self.message_user(request, f"{updated} inquiry(s) marked as Contacted.")
+
+    @admin.action(description="Mark selected as Completed")
+    def mark_completed(self, request, queryset):
+        updated = queryset.update(status="completed")
+        self.message_user(request, f"{updated} inquiry(s) marked as Completed.")

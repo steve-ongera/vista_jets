@@ -1,25 +1,25 @@
-// src/pages/GroupCharter.jsx
+// src/pages/GroupCharter.jsx  — NaN-safe version
 import { useState } from 'react'
 import { createGroupCharterInquiry } from '../services/api'
 
 const GROUP_TYPES = [
-  { value: 'corporate', label: 'Corporate / Business', icon: 'bi-briefcase' },
-  { value: 'sports_team', label: 'Sports Team', icon: 'bi-trophy' },
+  { value: 'corporate',     label: 'Corporate / Business', icon: 'bi-briefcase' },
+  { value: 'sports_team',   label: 'Sports Team',          icon: 'bi-trophy' },
   { value: 'entertainment', label: 'Entertainment / Film', icon: 'bi-camera-video' },
-  { value: 'incentive', label: 'Incentive Group', icon: 'bi-star' },
-  { value: 'wedding', label: 'Wedding Party', icon: 'bi-heart' },
-  { value: 'government', label: 'Government / Diplomatic', icon: 'bi-building' },
-  { value: 'other', label: 'Other', icon: 'bi-three-dots' },
+  { value: 'incentive',     label: 'Incentive Group',      icon: 'bi-star' },
+  { value: 'wedding',       label: 'Wedding Party',        icon: 'bi-heart' },
+  { value: 'government',    label: 'Government / Diplomatic', icon: 'bi-building' },
+  { value: 'other',         label: 'Other',                icon: 'bi-three-dots' },
 ]
 
 const AIRCRAFT_CATEGORIES = [
-  { value: '', label: 'No Preference' },
-  { value: 'light', label: 'Light Jet (up to 8 pax)' },
-  { value: 'midsize', label: 'Midsize Jet (up to 9 pax)' },
+  { value: '',              label: 'No Preference' },
+  { value: 'light',         label: 'Light Jet (up to 8 pax)' },
+  { value: 'midsize',       label: 'Midsize Jet (up to 9 pax)' },
   { value: 'super_midsize', label: 'Super Midsize (up to 10 pax)' },
-  { value: 'heavy', label: 'Heavy Jet (up to 16 pax)' },
-  { value: 'ultra_long', label: 'Ultra Long Range (up to 19 pax)' },
-  { value: 'vip_airliner', label: 'VIP Airliner (20+ pax)' },
+  { value: 'heavy',         label: 'Heavy Jet (up to 16 pax)' },
+  { value: 'ultra_long',    label: 'Ultra Long Range (up to 19 pax)' },
+  { value: 'vip_airliner',  label: 'VIP Airliner (20+ pax)' },
 ]
 
 function SuccessState({ reference, message, onNew }) {
@@ -56,35 +56,47 @@ export default function GroupCharter() {
     budget_range: '', additional_notes: '',
   })
 
-  const [form, setForm] = useState(blank())
+  const [form, setForm]   = useState(blank())
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(null)
-  const [error, setError] = useState(null)
+  const [error, setError]     = useState(null)
 
-  const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
-  const reset = () => { setForm(blank()); setSuccess(null); setError(null) }
+  const set   = (k, v) => setForm(f => ({ ...f, [k]: v }))
+  const reset = ()     => { setForm(blank()); setSuccess(null); setError(null) }
 
   const submit = async (e) => {
     e.preventDefault()
     setLoading(true); setError(null)
     try {
-      const res = await createGroupCharterInquiry(form)
+      const groupSize = parseInt(form.group_size)
+      const payload = {
+        ...form,
+        group_size: isNaN(groupSize) ? 1 : groupSize,
+        // Send null for empty dates — Django rejects empty strings for DateField
+        departure_date: form.departure_date || null,
+        return_date: form.return_date || null,
+      }
+      const res = await createGroupCharterInquiry(payload)
       setSuccess(res)
     } catch (err) {
       const errData = err?.data
-      const msg = typeof errData === 'object'
-        ? Object.values(errData).flat().join(' ')
-        : 'Something went wrong. Please try again.'
+      const msg = typeof errData === 'object' ? Object.values(errData).flat().join(' ') : 'Something went wrong. Please try again.'
       setError(msg)
     } finally { setLoading(false) }
   }
 
   const FEATURES = [
-    { icon: 'bi-people-fill', title: 'Any Group Size', desc: 'From 10 to 500+ passengers. We configure multiple aircraft or a single VIP airliner to match your exact requirements.' },
-    { icon: 'bi-calendar-check', title: 'Coordinated Scheduling', desc: 'Complex multi-leg, multi-aircraft operations handled seamlessly. Your entire group departs and arrives together.' },
-    { icon: 'bi-cup-hot', title: 'Custom Catering', desc: 'Bespoke menus curated by executive chefs. Dietary requirements, branded packaging, and in-flight entertainment all arranged.' },
-    { icon: 'bi-car-front', title: 'Ground Logistics', desc: 'End-to-end ground transport, lounge access, and hotel coordination. One point of contact manages everything.' },
+    { icon: 'bi-people-fill',   title: 'Any Group Size',         desc: 'From 10 to 500+ passengers. We configure multiple aircraft or a single VIP airliner to match your exact requirements.' },
+    { icon: 'bi-calendar-check',title: 'Coordinated Scheduling', desc: 'Complex multi-leg, multi-aircraft operations handled seamlessly. Your entire group departs and arrives together.' },
+    { icon: 'bi-cup-hot',       title: 'Custom Catering',        desc: 'Bespoke menus curated by executive chefs. Dietary requirements, branded packaging, and in-flight entertainment all arranged.' },
+    { icon: 'bi-car-front',     title: 'Ground Logistics',       desc: 'End-to-end ground transport, lounge access, and hotel coordination. One point of contact manages everything.' },
   ]
+
+  const SectionLabel = ({ icon, children, required }) => (
+    <div style={{ fontWeight: 600, fontSize: '0.8rem', color: 'var(--navy)', marginBottom: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+      <i className={`bi ${icon}`} style={{ color: 'var(--gold)' }} />{children}{required && <span className="req"> *</span>}
+    </div>
+  )
 
   return (
     <div>
@@ -138,9 +150,7 @@ export default function GroupCharter() {
 
                 {/* Group Type */}
                 <div style={{ marginBottom: '1.75rem' }}>
-                  <div style={{ fontWeight: 600, fontSize: '0.8rem', color: 'var(--navy)', marginBottom: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                    <i className="bi bi-people" style={{ color: 'var(--gold)' }} /> Group Type
-                  </div>
+                  <SectionLabel icon="bi-people" required>Group Type</SectionLabel>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                     {GROUP_TYPES.map(({ value, label, icon }) => (
                       <button key={value} type="button" onClick={() => set('group_type', value)}
@@ -152,9 +162,7 @@ export default function GroupCharter() {
                 </div>
 
                 {/* Contact */}
-                <div style={{ fontWeight: 600, fontSize: '0.8rem', color: 'var(--navy)', marginBottom: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                  <i className="bi bi-person" style={{ color: 'var(--gold)' }} /> Contact Details
-                </div>
+                <SectionLabel icon="bi-person">Contact Details</SectionLabel>
                 <div className="form-grid" style={{ marginBottom: '1.5rem' }}>
                   <div className="form-group">
                     <label className="form-label">Full Name <span className="req">*</span></label>
@@ -175,9 +183,7 @@ export default function GroupCharter() {
                 </div>
 
                 {/* Flight */}
-                <div style={{ fontWeight: 600, fontSize: '0.8rem', color: 'var(--navy)', marginBottom: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                  <i className="bi bi-map" style={{ color: 'var(--gold)' }} /> Flight Details
-                </div>
+                <SectionLabel icon="bi-map">Flight Details</SectionLabel>
                 <div className="form-grid" style={{ marginBottom: '1rem' }}>
                   <div className="form-group">
                     <label className="form-label">Origin <span className="req">*</span></label>
@@ -189,7 +195,10 @@ export default function GroupCharter() {
                   </div>
                   <div className="form-group">
                     <label className="form-label">Group Size <span className="req">*</span></label>
-                    <input className="form-control" type="number" min={2} required value={form.group_size} onChange={e => set('group_size', parseInt(e.target.value))} />
+                    {/* FIX: value uses ?? '' to prevent NaN, onChange guards parseInt */}
+                    <input className="form-control" type="number" min={2} required
+                      value={form.group_size ?? ''}
+                      onChange={e => { const v = parseInt(e.target.value); set('group_size', isNaN(v) ? '' : v) }} />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Departure Date</label>
@@ -197,7 +206,7 @@ export default function GroupCharter() {
                   </div>
                 </div>
 
-                {/* Round trip toggle */}
+                {/* Round trip */}
                 <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
                   {[['one_way', 'One Way'], ['round_trip', 'Round Trip']].map(([v, l]) => (
                     <button key={v} type="button"
@@ -223,9 +232,7 @@ export default function GroupCharter() {
                 </div>
 
                 {/* Add-ons */}
-                <div style={{ fontWeight: 600, fontSize: '0.8rem', color: 'var(--navy)', marginBottom: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-                  <i className="bi bi-stars" style={{ color: 'var(--gold)' }} /> Add-ons & Services
-                </div>
+                <SectionLabel icon="bi-stars">Add-ons & Services</SectionLabel>
                 <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
                   {[['catering_required', 'bi-cup-hot', 'Catering Package'], ['ground_transport_required', 'bi-car-front', 'Ground Transport']].map(([k, icon, label]) => (
                     <button key={k} type="button" onClick={() => set(k, !form[k])}
@@ -236,11 +243,9 @@ export default function GroupCharter() {
                   ))}
                 </div>
 
-                <div className="form-grid" style={{ marginBottom: '1.5rem' }}>
-                  <div className="form-group">
-                    <label className="form-label">Estimated Budget</label>
-                    <input className="form-control" value={form.budget_range} onChange={e => set('budget_range', e.target.value)} placeholder="e.g. $100,000 – $250,000" />
-                  </div>
+                <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+                  <label className="form-label">Estimated Budget</label>
+                  <input className="form-control" value={form.budget_range} onChange={e => set('budget_range', e.target.value)} placeholder="e.g. $100,000 – $250,000" />
                 </div>
 
                 <div className="form-group" style={{ marginBottom: '2rem' }}>

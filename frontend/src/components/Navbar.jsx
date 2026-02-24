@@ -4,10 +4,11 @@ import { Link, useLocation } from 'react-router-dom'
 
 // ── The 5 most-clicked tabs shown directly in the bar ─────────────────────────
 const PRIMARY_LINKS = [
-  { to: '/book-flight',   label: 'Book a Flight', icon: 'bi-airplane',    cta: true },
-  { to: '/fleet',         label: 'Our Fleet',     icon: 'bi-grid-3x3-gap' },
-  { to: '/yacht-charter', label: 'Yacht Charter', icon: 'bi-water' },
-  { to: '/contact',       label: 'Contact Us',    icon: 'bi-envelope' },
+  { to: '/book-flight',    label: 'Book a Flight',  icon: 'bi-airplane',    cta: true },
+  { to: '/fleet',          label: 'Our Fleet',      icon: 'bi-grid-3x3-gap' },
+  { to: '/yacht-charter',  label: 'Yacht Charter',  icon: 'bi-water' },
+  { to: '/flight-inquiry', label: 'Flight Inquiry', icon: 'bi-send' },
+  { to: '/contact',        label: 'Contact Us',     icon: 'bi-envelope' },
 ]
 
 // ── "Services" dropdown — specialist / less-frequent pages ────────────────────
@@ -140,14 +141,11 @@ export default function Navbar() {
 
                     {/* Footer shortcut */}
                     <div style={{ padding: '0.65rem 1.1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <Link to="/flight-inquiry" style={{ fontSize: '0.78rem', color: 'var(--navy)', fontWeight: 500, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                        <i className="bi bi-send" style={{ color: 'var(--gold)', fontSize: '0.8rem' }} /> Flight Inquiry
-                      </Link>
                       <Link to="/about" style={{ fontSize: '0.78rem', color: 'var(--navy)', fontWeight: 500, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                         <i className="bi bi-building" style={{ color: 'var(--gold)', fontSize: '0.8rem' }} /> About Us
                       </Link>
                       <Link to="/track" style={{ fontSize: '0.78rem', color: 'var(--navy)', fontWeight: 500, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                        <i className="bi bi-search" style={{ color: 'var(--gold)', fontSize: '0.8rem' }} /> Track
+                        <i className="bi bi-search" style={{ color: 'var(--gold)', fontSize: '0.8rem' }} /> Track Booking
                       </Link>
                     </div>
                   </div>
