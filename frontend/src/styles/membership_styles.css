@@ -1,0 +1,601 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   membership_styles.css
+   Inherits design tokens from global.css — import AFTER global.css
+   Usage: import '../../styles/membership_styles.css'
+───────────────────────────────────────────────────────────────────────────── */
+
+/* ── Membership Layout Shell ─────────────────────────────────────────────── */
+
+.mem-shell {
+  display: flex;
+  min-height: 100vh;
+  padding-top: 68px; /* clears fixed navbar */
+  background: var(--off-white);
+  font-family: var(--font-body);
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────────────────── */
+.mem-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--navy);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 68px;       /* below navbar */
+  left: 0;
+  bottom: 0;
+  z-index: 200;
+  overflow-y: auto;
+  transition: transform 0.32s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  box-shadow: 4px 0 24px rgba(11,29,58,0.18);
+}
+
+.mem-sidebar-header {
+  padding: 1.75rem 1.5rem 1.25rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.mem-sidebar-role {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  margin-bottom: 0.3rem;
+}
+
+.mem-sidebar-name {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.3;
+}
+
+.mem-sidebar-email {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.4);
+  margin-top: 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mem-sidebar-avatar {
+  width: 44px;
+  height: 44px;
+  background: rgba(184,149,90,0.2);
+  border: 2px solid rgba(184,149,90,0.4);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: var(--gold-light);
+  margin-bottom: 0.85rem;
+  flex-shrink: 0;
+}
+
+.mem-nav {
+  flex: 1;
+  padding: 1rem 0;
+  overflow-y: auto;
+}
+
+.mem-nav-section {
+  padding: 0.5rem 1.5rem 0.25rem;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.28);
+  margin-top: 0.75rem;
+}
+
+.mem-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.72rem 1.5rem;
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.6);
+  cursor: pointer;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+  position: relative;
+}
+
+.mem-nav-item i {
+  font-size: 1rem;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.mem-nav-item:hover {
+  color: var(--white);
+  background: rgba(255,255,255,0.05);
+  border-left-color: rgba(184,149,90,0.4);
+}
+
+.mem-nav-item:hover i { color: var(--gold-light); }
+
+.mem-nav-item.active {
+  color: var(--white);
+  background: rgba(184,149,90,0.12);
+  border-left-color: var(--gold);
+  font-weight: 600;
+}
+
+.mem-nav-item.active i { color: var(--gold); }
+
+.mem-nav-badge {
+  margin-left: auto;
+  background: var(--gold);
+  color: var(--white);
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 20px;
+  line-height: 1.6;
+}
+
+.mem-nav-badge.red {
+  background: #E05252;
+}
+
+.mem-nav-badge.blue {
+  background: #6CB4E4;
+}
+
+.mem-sidebar-footer {
+  padding: 1.25rem 1.5rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.mem-sidebar-footer .mem-nav-item {
+  border-radius: var(--radius);
+  border-left: none;
+  padding: 0.6rem 0.85rem;
+  color: rgba(255,255,255,0.45);
+  font-size: 0.8rem;
+}
+
+.mem-sidebar-footer .mem-nav-item:hover {
+  background: rgba(224,82,82,0.12);
+  color: #ff8080;
+  border-left: none;
+}
+
+/* ── Main Content Area ───────────────────────────────────────────────────── */
+.mem-main {
+  flex: 1;
+  margin-left: 260px;
+  min-height: calc(100vh - 68px);
+  display: flex;
+  flex-direction: column;
+}
+
+.mem-topbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-100);
+  padding: 1.25rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  position: sticky;
+  top: 68px;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+.mem-page-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mem-page-title i {
+  font-size: 1rem;
+  color: var(--gold);
+}
+
+.mem-content {
+  flex: 1;
+  padding: 2rem;
+}
+
+/* ── Sidebar toggle (mobile) ─────────────────────────────────────────────── */
+.mem-sidebar-toggle {
+  display: none;
+  background: none;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 0.4rem 0.7rem;
+  cursor: pointer;
+  color: var(--navy);
+  font-size: 1.1rem;
+  align-items: center;
+  gap: 0.4rem;
+  transition: var(--transition);
+}
+
+.mem-sidebar-toggle:hover {
+  background: var(--gray-50);
+}
+
+.mem-sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(11,29,58,0.5);
+  z-index: 199;
+}
+
+/* ── Stat Cards ──────────────────────────────────────────────────────────── */
+.mem-stat-card {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.mem-stat-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.mem-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--gold);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.mem-stat-card:hover::before { opacity: 1; }
+
+.mem-stat-icon {
+  width: 42px;
+  height: 42px;
+  background: var(--gold-pale);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.mem-stat-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gray-400);
+  margin-bottom: 0.35rem;
+}
+
+.mem-stat-value {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.mem-stat-sub {
+  font-size: 0.72rem;
+  color: var(--gray-400);
+}
+
+.mem-stat-accent { border-left: 3px solid var(--gold); }
+.mem-stat-accent-green { border-left: 3px solid #50C878; }
+.mem-stat-accent-blue { border-left: 3px solid #6CB4E4; }
+.mem-stat-accent-purple { border-left: 3px solid #9B59B6; }
+
+/* ── Table Panel ─────────────────────────────────────────────────────────── */
+.mem-panel {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.mem-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--gray-100);
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.mem-panel-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mem-panel-title i { color: var(--gold); font-size: 0.9rem; }
+
+.mem-panel-body {
+  padding: 1.25rem 1.5rem;
+}
+
+.mem-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--gray-100);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.mem-row:last-child { border-bottom: none; }
+
+/* ── Revenue Bar ─────────────────────────────────────────────────────────── */
+.mem-revenue-bar {
+  display: flex;
+  height: 36px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.mem-revenue-bar-platform {
+  background: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 0.6s ease;
+}
+
+.mem-revenue-bar-owner {
+  flex: 1;
+  background: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 0.6s ease;
+}
+
+.mem-revenue-bar span {
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.mem-legend {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  color: var(--gray-600);
+}
+
+.mem-legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 0.35rem;
+  vertical-align: middle;
+}
+
+/* ── Alert Banner ────────────────────────────────────────────────────────── */
+.mem-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+}
+
+.mem-alert i { font-size: 1rem; flex-shrink: 0; }
+
+.mem-alert-warning {
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  color: #92400E;
+}
+
+.mem-alert-danger {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #991B1B;
+}
+
+.mem-alert-success {
+  background: #EBF7F1;
+  border: 1px solid #A7D7C5;
+  color: #1a8754;
+}
+
+.mem-alert-info {
+  background: var(--blue-soft);
+  border: 1px solid #BED1EF;
+  color: var(--navy);
+}
+
+/* ── Badge ───────────────────────────────────────────────────────────────── */
+.mem-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+}
+
+.mem-badge-gold     { background: var(--gold-pale); color: #7A5C22; }
+.mem-badge-green    { background: #EBF7F1; color: #1a8754; }
+.mem-badge-red      { background: #FEF2F2; color: #991B1B; }
+.mem-badge-blue     { background: var(--blue-soft); color: var(--navy); }
+.mem-badge-orange   { background: #FFFBEB; color: #92400E; }
+.mem-badge-purple   { background: #F5F0FB; color: #6B3FA0; }
+.mem-badge-gray     { background: var(--gray-100); color: var(--gray-600); }
+.mem-badge-navy     { background: var(--navy); color: var(--white); }
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+.mem-empty {
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+  color: var(--gray-400);
+}
+
+.mem-empty i {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 0.75rem;
+  color: var(--gray-200);
+}
+
+.mem-empty p {
+  font-size: 0.9rem;
+  margin-bottom: 1.25rem;
+  color: var(--gray-400);
+}
+
+/* ── Form Modal ──────────────────────────────────────────────────────────── */
+.mem-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(11,29,58,0.55);
+  z-index: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.mem-modal {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-xl);
+  animation: slideUp 0.25s ease;
+}
+
+.mem-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.mem-modal-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.mem-modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: var(--gray-400);
+  padding: 0.2rem;
+  transition: color 0.2s;
+  line-height: 1;
+}
+
+.mem-modal-close:hover { color: var(--navy); }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── Membership auth pages (Login, Register, Plans) ──────────────────────── */
+.mem-auth-page {
+  min-height: 100vh;
+  padding-top: 68px; /* clears navbar */
+  background: var(--off-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(68px + 2rem) 1.5rem 2rem;
+}
+
+.mem-auth-card {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-radius: var(--radius-lg);
+  padding: 2.25rem;
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+}
+
+/* ── Plans page hero clears navbar ──────────────────────────────────────── */
+.mem-plans-hero {
+  padding-top: calc(68px + 5rem);
+  padding-bottom: 5rem;
+}
+
+/* ── Dashboard client/owner (no sidebar) ─────────────────────────────────── */
+.mem-dash-page {
+  padding-top: 68px; /* clears navbar */
+  min-height: 100vh;
+  background: var(--off-white);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .mem-sidebar { transform: translateX(-100%); }
+  .mem-sidebar.open { transform: translateX(0); }
+  .mem-sidebar-overlay { display: block; }
+  .mem-main { margin-left: 0; }
+  .mem-sidebar-toggle { display: flex; }
+  .mem-content { padding: 1.25rem; }
+  .mem-topbar { padding: 1rem 1.25rem; top: 68px; }
+}
+
+@media (max-width: 640px) {
+  .mem-content { padding: 1rem; }
+  .mem-stat-value { font-size: 1.55rem; }
+  .mem-panel-header { flex-direction: column; align-items: flex-start; }
+  .mem-modal { padding: 1.5rem; }
+}
