@@ -420,3 +420,273 @@ class AdminDashboardSerializer(serializers.Serializer):
     pending_approvals      = serializers.IntegerField()
     open_disputes          = serializers.IntegerField()
     commission_rate        = serializers.DecimalField(max_digits=5, decimal_places=2)
+    
+    
+    
+# ── ADD TO / APPEND TO serializers.py ────────────────────────────────────────
+# These are the NEW serializers to add to your existing serializers.py
+# Add the new imports at the top of serializers.py:
+#
+from .models import EmailLog
+from django.core.mail import send_mail
+from django.conf import settings
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+from rest_framework import serializers
+from django.contrib.auth import authenticate
+from .models import (
+    User, MembershipTier, Membership,
+    MarketplaceAircraft, MaintenanceLog,
+    MarketplaceBooking, CommissionSetting,
+    PaymentRecord, SavedRoute, Dispute,
+    # Inquiry models
+    FlightBooking, YachtCharter, LeaseInquiry,
+    FlightInquiry, ContactInquiry, GroupCharterInquiry,
+    AirCargoInquiry, AircraftSalesInquiry,
+    Airport, Aircraft, Yacht,
+)
+
+
+# ── EMAIL LOG SERIALIZER ──────────────────────────────────────────────────────
+class EmailLogSerializer(serializers.ModelSerializer):
+    sent_by_name = serializers.CharField(source='sent_by.get_full_name', read_only=True)
+
+    class Meta:
+        model  = EmailLog          # see models_additions.py
+        fields = '__all__'
+        read_only_fields = ['sent_by', 'sent_at', 'reference']
+
+
+# ── SEND EMAIL SERIALIZER (generic admin email tool) ─────────────────────────
+class SendEmailSerializer(serializers.Serializer):
+    to_email    = serializers.EmailField()
+    to_name     = serializers.CharField(max_length=200, required=False, default='')
+    subject     = serializers.CharField(max_length=500)
+    body        = serializers.CharField()
+    inquiry_type = serializers.ChoiceField(
+        choices=[
+            ('flight_booking', 'Flight Booking'),
+            ('yacht_charter',  'Yacht Charter'),
+            ('lease_inquiry',  'Lease Inquiry'),
+            ('flight_inquiry', 'Flight Inquiry'),
+            ('contact',        'Contact'),
+            ('group_charter',  'Group Charter'),
+            ('air_cargo',      'Air Cargo'),
+            ('aircraft_sales', 'Aircraft Sales'),
+            ('marketplace_booking', 'Marketplace Booking'),
+            ('general',        'General'),
+        ],
+        required=False,
+        default='general',
+    )
+    related_id  = serializers.IntegerField(required=False, allow_null=True)
+
+
+# ── FLIGHT BOOKING ADMIN SERIALIZERS ─────────────────────────────────────────
+class FlightBookingAdminSerializer(serializers.ModelSerializer):
+    """Full admin view with computed price, status control"""
+    legs          = serializers.SerializerMethodField()
+    origin_detail = serializers.SerializerMethodField()
+    dest_detail   = serializers.SerializerMethodField()
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+    trip_type_display = serializers.CharField(source='get_trip_type_display', read_only=True)
+
+    class Meta:
+        model  = FlightBooking
+        fields = '__all__'
+        read_only_fields = ['reference', 'created_at', 'updated_at']
+
+    def get_legs(self, obj):
+        from .serializers import FlightLegSerializer
+        return FlightLegSerializer(obj.legs.all(), many=True).data
+
+    def get_origin_detail(self, obj):
+        if obj.origin:
+            return {'id': obj.origin.id, 'code': obj.origin.code, 'city': obj.origin.city}
+        return None
+
+    def get_dest_detail(self, obj):
+        if obj.destination:
+            return {'id': obj.destination.id, 'code': obj.destination.code, 'city': obj.destination.city}
+        return None
+
+
+class FlightBookingPriceSerializer(serializers.Serializer):
+    """Admin sets a quoted price and optionally sends email"""
+    quoted_price_usd = serializers.DecimalField(max_digits=12, decimal_places=2)
+    status           = serializers.ChoiceField(
+        choices=['inquiry','quoted','confirmed','in_flight','completed','cancelled'],
+        required=False
+    )
+    send_email       = serializers.BooleanField(default=True)
+    email_message    = serializers.CharField(required=False, default='')
+
+
+class FlightBookingCreateAdminSerializer(serializers.ModelSerializer):
+    """Admin creates a flight booking on behalf of a guest"""
+    class Meta:
+        model  = FlightBooking
+        exclude = ['reference', 'created_at', 'updated_at']
+
+
+# ── YACHT CHARTER ADMIN SERIALIZERS ──────────────────────────────────────────
+class YachtCharterAdminSerializer(serializers.ModelSerializer):
+    yacht_name     = serializers.CharField(source='yacht.name', read_only=True)
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+
+    class Meta:
+        model  = YachtCharter
+        fields = '__all__'
+        read_only_fields = ['reference', 'created_at', 'updated_at']
+
+
+class YachtCharterPriceSerializer(serializers.Serializer):
+    quoted_price_usd = serializers.DecimalField(max_digits=14, decimal_places=2)
+    status           = serializers.ChoiceField(
+        choices=['inquiry','quoted','confirmed','active','completed','cancelled'],
+        required=False
+    )
+    send_email    = serializers.BooleanField(default=True)
+    email_message = serializers.CharField(required=False, default='')
+
+
+# ── LEASE INQUIRY ADMIN ───────────────────────────────────────────────────────
+class LeaseInquiryAdminSerializer(serializers.ModelSerializer):
+    aircraft_name  = serializers.CharField(source='aircraft.name', read_only=True)
+    yacht_name     = serializers.CharField(source='yacht.name', read_only=True)
+    asset_type_display    = serializers.CharField(source='get_asset_type_display', read_only=True)
+    lease_duration_display = serializers.CharField(source='get_lease_duration_display', read_only=True)
+
+    class Meta:
+        model  = LeaseInquiry
+        fields = '__all__'
+        read_only_fields = ['reference', 'created_at']
+
+
+# ── CONTACT INQUIRY ADMIN ─────────────────────────────────────────────────────
+class ContactInquiryAdminSerializer(serializers.ModelSerializer):
+    subject_display = serializers.CharField(source='get_subject_display', read_only=True)
+
+    class Meta:
+        model  = ContactInquiry
+        fields = '__all__'
+        read_only_fields = ['reference', 'created_at']
+
+
+# ── GROUP CHARTER ADMIN ───────────────────────────────────────────────────────
+class GroupCharterInquiryAdminSerializer(serializers.ModelSerializer):
+    group_type_display = serializers.CharField(source='get_group_type_display', read_only=True)
+
+    class Meta:
+        model  = GroupCharterInquiry
+        fields = '__all__'
+        read_only_fields = ['reference', 'status', 'created_at']
+
+
+# ── AIR CARGO ADMIN ───────────────────────────────────────────────────────────
+class AirCargoInquiryAdminSerializer(serializers.ModelSerializer):
+    cargo_type_display = serializers.CharField(source='get_cargo_type_display', read_only=True)
+    urgency_display    = serializers.CharField(source='get_urgency_display', read_only=True)
+
+    class Meta:
+        model  = AirCargoInquiry
+        fields = '__all__'
+        read_only_fields = ['reference', 'status', 'created_at']
+
+
+# ── AIRCRAFT SALES ADMIN ──────────────────────────────────────────────────────
+class AircraftSalesInquiryAdminSerializer(serializers.ModelSerializer):
+    inquiry_type_display = serializers.CharField(source='get_inquiry_type_display', read_only=True)
+    budget_range_display = serializers.CharField(source='get_budget_range_display', read_only=True)
+
+    class Meta:
+        model  = AircraftSalesInquiry
+        fields = '__all__'
+        read_only_fields = ['reference', 'status', 'created_at']
+
+
+# ── PRICE CALCULATOR SERIALIZER (standalone tool) ─────────────────────────────
+class PriceCalculatorSerializer(serializers.Serializer):
+    """Admin price calculator - takes inputs, returns breakdown"""
+    aircraft_id      = serializers.IntegerField(required=False, allow_null=True)
+    hourly_rate_usd  = serializers.DecimalField(max_digits=10, decimal_places=2, required=False)
+    estimated_hours  = serializers.DecimalField(max_digits=6, decimal_places=1)
+    passenger_count  = serializers.IntegerField(min_value=1)
+    catering         = serializers.BooleanField(default=False)
+    ground_transport = serializers.BooleanField(default=False)
+    concierge        = serializers.BooleanField(default=False)
+    discount_pct     = serializers.DecimalField(max_digits=5, decimal_places=2, default=0)
+    commission_pct   = serializers.DecimalField(max_digits=5, decimal_places=2, required=False)
+    notes            = serializers.CharField(required=False, default='')
+
+
+# ── MARKETPLACE BOOKING ADMIN RESPONSE ───────────────────────────────────────
+class MarketplaceBookingAdminSerializer(serializers.ModelSerializer):
+    client_name    = serializers.CharField(source='client.get_full_name', read_only=True)
+    client_email   = serializers.EmailField(source='client.email', read_only=True)
+    aircraft_name  = serializers.CharField(source='aircraft.name', read_only=True)
+    aircraft_reg   = serializers.CharField(source='aircraft.registration_number', read_only=True)
+    owner_name     = serializers.CharField(source='aircraft.owner.get_full_name', read_only=True)
+    owner_email    = serializers.EmailField(source='aircraft.owner.email', read_only=True)
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+    tier_name      = serializers.SerializerMethodField()
+
+    class Meta:
+        model  = MarketplaceBooking
+        fields = '__all__'
+        read_only_fields = ['reference', 'client', 'commission_usd', 'net_owner_usd', 'created_at', 'updated_at']
+
+    def get_tier_name(self, obj):
+        return obj.membership.tier.display_name if obj.membership else None
+
+
+class MarketplaceBookingCreateAdminSerializer(serializers.ModelSerializer):
+    """Admin creates a marketplace booking on behalf of a client"""
+    class Meta:
+        model  = MarketplaceBooking
+        fields = [
+            'client', 'aircraft', 'trip_type', 'origin', 'destination',
+            'departure_datetime', 'return_datetime', 'estimated_hours',
+            'passenger_count', 'special_requests', 'gross_amount_usd',
+            'commission_pct', 'discount_applied',
+        ]
+
+
+# ── USER MANAGEMENT ───────────────────────────────────────────────────────────
+class UserAdminSerializer(serializers.ModelSerializer):
+    membership_status = serializers.SerializerMethodField()
+    membership_tier   = serializers.SerializerMethodField()
+    full_name         = serializers.SerializerMethodField()
+
+    class Meta:
+        model  = User
+        fields = [
+            'id', 'username', 'email', 'first_name', 'last_name', 'full_name',
+            'phone', 'company', 'role', 'is_active', 'created_at',
+            'membership_status', 'membership_tier',
+        ]
+
+    def get_membership_status(self, obj):
+        try:
+            return obj.membership.status
+        except Exception:
+            return None
+
+    def get_membership_tier(self, obj):
+        try:
+            return obj.membership.tier.display_name
+        except Exception:
+            return None
+
+    def get_full_name(self, obj):
+        return obj.get_full_name() or obj.username
+
+
+# ── FLEET INQUIRY REPLY SERIALIZER ───────────────────────────────────────────
+class InquiryReplySerializer(serializers.Serializer):
+    """Generic reply serializer used across all inquiry types"""
+    subject       = serializers.CharField(max_length=500)
+    message       = serializers.CharField()
+    new_status    = serializers.CharField(required=False, default='')
+    quoted_price  = serializers.DecimalField(max_digits=14, decimal_places=2, required=False, allow_null=True)

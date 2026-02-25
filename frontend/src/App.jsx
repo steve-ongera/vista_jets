@@ -23,13 +23,6 @@ import ClientDashboard from './pages/membership/ClientDashboard';
 import OwnerDashboard from './pages/membership/OwnerDashboard';
 import AdminDashboard from './pages/membership/AdminDashboard';
 
-// Option 2: If they are named exports (uncomment if needed)
-// import { Login } from './pages/membership/Login';
-// import { Register } from './pages/membership/Register';
-// import { Plans } from './pages/membership/Plans';
-// import { ClientDashboard } from './pages/membership/ClientDashboard';
-// import { OwnerDashboard } from './pages/membership/OwnerDashboard';
-// import { AdminDashboard } from './pages/membership/AdminDashboard';
 
 // Auth guard helper
 function RequireAuth({ children, role }) {

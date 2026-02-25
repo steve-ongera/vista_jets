@@ -349,16 +349,7 @@ class AircraftSalesInquiryViewSet(viewsets.ModelViewSet):
         
         
 
-# ── MEMBERSHIP SYSTEM: ADD TO viewsets.py ─────────────────────────────────────
-# pip install djangorestframework-simplejwt
-# Add to settings.py:
-#   INSTALLED_APPS += ['rest_framework_simplejwt']
-#   REST_FRAMEWORK = {
-#       'DEFAULT_AUTHENTICATION_CLASSES': [
-#           'rest_framework_simplejwt.authentication.JWTAuthentication',
-#       ],
-#   }
-#   AUTH_USER_MODEL = 'api.User'
+
 
 from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
@@ -818,4 +809,631 @@ class AdminDashboardViewSet(viewsets.ViewSet):
             'pending_approvals':      MarketplaceAircraft.objects.filter(is_approved=False).count(),
             'open_disputes':          Dispute.objects.filter(status='open').count(),
             'commission_rate':        commission.rate_pct if commission else 10,
+        })
+        
+        
+        
+
+# ── ADD TO / APPEND TO views.py ──────────────────────────────────────────────
+# New admin viewsets. Add these imports at the top of views.py:
+
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.conf import settings as django_settings
+from .models import EmailLog
+from .serializers import (
+      SendEmailSerializer, FlightBookingAdminSerializer,
+      FlightBookingPriceSerializer, FlightBookingCreateAdminSerializer,
+      YachtCharterAdminSerializer, YachtCharterPriceSerializer,
+      LeaseInquiryAdminSerializer, ContactInquiryAdminSerializer,
+      GroupCharterInquiryAdminSerializer, AirCargoInquiryAdminSerializer,
+      AircraftSalesInquiryAdminSerializer, PriceCalculatorSerializer,
+      MarketplaceBookingAdminSerializer, MarketplaceBookingCreateAdminSerializer,
+      UserAdminSerializer, InquiryReplySerializer, EmailLogSerializer,
+  )
+# ─────────────────────────────────────────────────────────────────────────────
+
+from rest_framework import viewsets, status, permissions, filters
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.conf import settings as django_settings
+from django.db.models import Sum, Count, Q
+from django.utils import timezone
+from datetime import timedelta
+from decimal import Decimal, ROUND_HALF_UP
+
+from .models import (
+    User, Membership, MembershipTier,
+    MarketplaceAircraft, MarketplaceBooking, CommissionSetting,
+    MaintenanceLog, PaymentRecord, Dispute, SavedRoute,
+    FlightBooking, YachtCharter, LeaseInquiry, FlightInquiry,
+    ContactInquiry, GroupCharterInquiry, AirCargoInquiry, AircraftSalesInquiry,
+    Aircraft, Yacht, Airport, EmailLog,
+)
+
+
+# ── SHARED HELPERS ────────────────────────────────────────────────────────────
+class IsAdminUser(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.role == 'admin'
+
+
+def _send_email_and_log(admin_user, to_email, to_name, subject, body,
+                        inquiry_type='general', related_id=None):
+    """Send HTML email and log result. Returns (success: bool, error: str)"""
+    html_body = f"""
+    <html><body style="font-family:Arial,sans-serif;max-width:600px;margin:auto;padding:20px">
+      <div style="background:#0b1d3a;padding:20px;border-radius:8px 8px 0 0">
+        <h2 style="color:#C9A84C;margin:0">VJetaway</h2>
+        <p style="color:rgba(255,255,255,0.6);margin:4px 0 0;font-size:13px">Private Aviation & Luxury Charter</p>
+      </div>
+      <div style="border:1px solid #e5e7eb;border-top:none;padding:28px;border-radius:0 0 8px 8px">
+        {"<p style='color:#374151'>Dear " + to_name + ",</p>" if to_name else ""}
+        <div style="color:#374151;line-height:1.7;white-space:pre-line">{body}</div>
+        <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0">
+        <p style="color:#9ca3af;font-size:12px;margin:0">
+          VJetaway · Private Aviation & Luxury Charter<br>
+          This email was sent by our operations team. Please do not reply directly to this message.
+        </p>
+      </div>
+    </body></html>
+    """
+    try:
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=body,
+            from_email=getattr(django_settings, 'DEFAULT_FROM_EMAIL', 'ops@vjetaway.com'),
+            to=[f'"{to_name}" <{to_email}>' if to_name else to_email],
+        )
+        msg.attach_alternative(html_body, "text/html")
+        msg.send()
+        EmailLog.objects.create(
+            sent_by=admin_user, to_email=to_email, to_name=to_name,
+            subject=subject, body=body, inquiry_type=inquiry_type,
+            related_id=related_id, success=True,
+        )
+        return True, ''
+    except Exception as e:
+        EmailLog.objects.create(
+            sent_by=admin_user, to_email=to_email, to_name=to_name,
+            subject=subject, body=body, inquiry_type=inquiry_type,
+            related_id=related_id, success=False, error_msg=str(e),
+        )
+        return False, str(e)
+
+
+# ── EMAIL LOG VIEWSET ─────────────────────────────────────────────────────────
+class EmailLogViewSet(viewsets.ReadOnlyModelViewSet):
+    permission_classes = [IsAdminUser]
+    filter_backends    = [filters.SearchFilter]
+    search_fields      = ['to_email', 'subject', 'inquiry_type']
+
+    def get_queryset(self):
+        return EmailLog.objects.select_related('sent_by').all()
+
+    def get_serializer_class(self):
+        from .serializers import EmailLogSerializer
+        return EmailLogSerializer
+
+    @action(detail=False, methods=['post'])
+    def send(self, request):
+        """Generic send-email endpoint for admin"""
+        from .serializers import SendEmailSerializer
+        ser = SendEmailSerializer(data=request.data)
+        if not ser.is_valid():
+            return Response(ser.errors, status=400)
+        d = ser.validated_data
+        ok, err = _send_email_and_log(
+            request.user, d['to_email'], d.get('to_name', ''),
+            d['subject'], d['body'], d.get('inquiry_type', 'general'),
+            d.get('related_id'),
+        )
+        if ok:
+            return Response({'message': f'Email sent to {d["to_email"]} successfully.'})
+        return Response({'error': f'Failed to send email: {err}'}, status=500)
+
+
+# ── PRICE CALCULATOR VIEW ─────────────────────────────────────────────────────
+class PriceCalculatorViewSet(viewsets.ViewSet):
+    permission_classes = [IsAdminUser]
+
+    @action(detail=False, methods=['post'])
+    def calculate(self, request):
+        from .serializers import PriceCalculatorSerializer
+        ser = PriceCalculatorSerializer(data=request.data)
+        if not ser.is_valid():
+            return Response(ser.errors, status=400)
+
+        d = ser.validated_data
+        commission = CommissionSetting.objects.order_by('-effective_from').first()
+        commission_pct = d.get('commission_pct') or (commission.rate_pct if commission else Decimal('10'))
+
+        # Base rate
+        hourly_rate = d.get('hourly_rate_usd')
+        if not hourly_rate and d.get('aircraft_id'):
+            try:
+                aircraft = Aircraft.objects.get(id=d['aircraft_id'])
+                hourly_rate = aircraft.hourly_rate_usd
+            except Aircraft.DoesNotExist:
+                pass
+        if not hourly_rate:
+            return Response({'error': 'Provide either aircraft_id or hourly_rate_usd.'}, status=400)
+
+        hours      = Decimal(str(d['estimated_hours']))
+        base       = hourly_rate * hours
+        catering   = Decimal('500') * d['passenger_count'] if d.get('catering') else Decimal('0')
+        ground     = Decimal('800') if d.get('ground_transport') else Decimal('0')
+        concierge  = Decimal('400') if d.get('concierge') else Decimal('0')
+        subtotal   = base + catering + ground + concierge
+        discount   = (subtotal * Decimal(str(d['discount_pct'])) / 100).quantize(Decimal('0.01'), ROUND_HALF_UP)
+        after_disc = subtotal - discount
+        comm_amt   = (after_disc * Decimal(str(commission_pct)) / 100).quantize(Decimal('0.01'), ROUND_HALF_UP)
+        owner_net  = after_disc - comm_amt
+
+        return Response({
+            'breakdown': {
+                'hourly_rate_usd':    float(hourly_rate),
+                'estimated_hours':    float(hours),
+                'base_flight_cost':   float(base),
+                'catering_cost':      float(catering),
+                'ground_transport':   float(ground),
+                'concierge_cost':     float(concierge),
+                'subtotal':           float(subtotal),
+                'discount_pct':       float(d['discount_pct']),
+                'discount_amount':    float(discount),
+                'total_after_discount': float(after_disc),
+                'commission_pct':     float(commission_pct),
+                'commission_amount':  float(comm_amt),
+                'owner_net_usd':      float(owner_net),
+                'grand_total_usd':    float(after_disc),
+            }
+        })
+
+
+# ── FLIGHT BOOKING ADMIN VIEWSET ──────────────────────────────────────────────
+class FlightBookingAdminViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAdminUser]
+    filter_backends    = [filters.SearchFilter]
+    search_fields      = ['guest_name', 'guest_email', 'reference']
+
+    def get_queryset(self):
+        return FlightBooking.objects.select_related('origin', 'destination', 'aircraft').order_by('-created_at')
+
+    def get_serializer_class(self):
+        from .serializers import FlightBookingAdminSerializer, FlightBookingCreateAdminSerializer
+        if self.action == 'create':
+            return FlightBookingCreateAdminSerializer
+        return FlightBookingAdminSerializer
+
+    @action(detail=True, methods=['post'])
+    def set_price(self, request, pk=None):
+        """Admin sets quoted price, updates status, sends confirmation email"""
+        from .serializers import FlightBookingPriceSerializer
+        booking = self.get_object()
+        ser = FlightBookingPriceSerializer(data=request.data)
+        if not ser.is_valid():
+            return Response(ser.errors, status=400)
+        d = ser.validated_data
+
+        booking.quoted_price_usd = d['quoted_price_usd']
+        if d.get('status'):
+            booking.status = d['status']
+        booking.save()
+
+        result = {'message': 'Price updated.', 'email_sent': False}
+
+        if d.get('send_email', True):
+            route = f"{booking.origin.code} → {booking.destination.code}"
+            body  = d.get('email_message') or (
+                f"Dear {booking.guest_name},\n\n"
+                f"Thank you for your flight enquiry with VJetaway.\n\n"
+                f"We are pleased to provide your quote for the following flight:\n\n"
+                f"Route:       {route}\n"
+                f"Date:        {booking.departure_date}\n"
+                f"Passengers:  {booking.passenger_count}\n"
+                f"Trip Type:   {booking.get_trip_type_display()}\n\n"
+                f"Quoted Price: USD ${d['quoted_price_usd']:,.2f}\n\n"
+                f"To confirm your booking, please reply to this email or contact your dedicated concierge.\n\n"
+                f"Warm regards,\nVJetaway Operations Team"
+            )
+            ok, err = _send_email_and_log(
+                request.user, booking.guest_email, booking.guest_name,
+                f"Your Flight Quote – {route} | VJetaway",
+                body, 'flight_booking', booking.id,
+            )
+            result['email_sent'] = ok
+            if not ok:
+                result['email_error'] = err
+
+        return Response(result)
+
+    @action(detail=True, methods=['post'])
+    def reply(self, request, pk=None):
+        """Send a custom email reply to the guest"""
+        from .serializers import InquiryReplySerializer
+        booking = self.get_object()
+        ser = InquiryReplySerializer(data=request.data)
+        if not ser.is_valid():
+            return Response(ser.errors, status=400)
+        d = ser.validated_data
+        if d.get('new_status'):
+            booking.status = d['new_status']
+        if d.get('quoted_price'):
+            booking.quoted_price_usd = d['quoted_price']
+        booking.save()
+        ok, err = _send_email_and_log(
+            request.user, booking.guest_email, booking.guest_name,
+            d['subject'], d['message'], 'flight_booking', booking.id,
+        )
+        if ok:
+            return Response({'message': 'Reply sent successfully.'})
+        return Response({'error': err}, status=500)
+
+    @action(detail=True, methods=['patch'])
+    def update_status(self, request, pk=None):
+        booking = self.get_object()
+        new_status = request.data.get('status')
+        valid = [s[0] for s in FlightBooking.STATUS_CHOICES]
+        if new_status not in valid:
+            return Response({'error': 'Invalid status.'}, status=400)
+        booking.status = new_status
+        booking.save()
+        return Response({'message': f'Status updated to {new_status}.'})
+
+
+# ── YACHT CHARTER ADMIN VIEWSET ───────────────────────────────────────────────
+class YachtCharterAdminViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAdminUser]
+    filter_backends    = [filters.SearchFilter]
+    search_fields      = ['guest_name', 'guest_email', 'reference']
+
+    def get_queryset(self):
+        return YachtCharter.objects.select_related('yacht').order_by('-created_at')
+
+    def get_serializer_class(self):
+        from .serializers import YachtCharterAdminSerializer
+        return YachtCharterAdminSerializer
+
+    @action(detail=True, methods=['post'])
+    def set_price(self, request, pk=None):
+        from .serializers import YachtCharterPriceSerializer
+        charter = self.get_object()
+        ser = YachtCharterPriceSerializer(data=request.data)
+        if not ser.is_valid():
+            return Response(ser.errors, status=400)
+        d = ser.validated_data
+        charter.quoted_price_usd = d['quoted_price_usd']
+        if d.get('status'):
+            charter.status = d['status']
+        charter.save()
+
+        result = {'message': 'Price updated.', 'email_sent': False}
+        if d.get('send_email', True):
+            nights = (charter.charter_end - charter.charter_start).days
+            body   = d.get('email_message') or (
+                f"Dear {charter.guest_name},\n\n"
+                f"Thank you for your yacht charter enquiry with VJetaway.\n\n"
+                f"Yacht:        {charter.yacht.name if charter.yacht else 'TBC'}\n"
+                f"Departure:    {charter.departure_port}\n"
+                f"Charter Start: {charter.charter_start}\n"
+                f"Charter End:  {charter.charter_end}\n"
+                f"Duration:     {nights} night(s)\n"
+                f"Guests:       {charter.guest_count}\n\n"
+                f"Quoted Price: USD ${d['quoted_price_usd']:,.2f}\n\n"
+                f"Please contact us to proceed with your booking confirmation.\n\n"
+                f"Warm regards,\nVJetaway Concierge Team"
+            )
+            ok, err = _send_email_and_log(
+                request.user, charter.guest_email, charter.guest_name,
+                f"Your Yacht Charter Quote | VJetaway",
+                body, 'yacht_charter', charter.id,
+            )
+            result['email_sent'] = ok
+            if not ok:
+                result['email_error'] = err
+        return Response(result)
+
+    @action(detail=True, methods=['post'])
+    def reply(self, request, pk=None):
+        from .serializers import InquiryReplySerializer
+        charter = self.get_object()
+        ser = InquiryReplySerializer(data=request.data)
+        if not ser.is_valid():
+            return Response(ser.errors, status=400)
+        d = ser.validated_data
+        if d.get('new_status'):
+            charter.status = d['new_status']
+        if d.get('quoted_price'):
+            charter.quoted_price_usd = d['quoted_price']
+        charter.save()
+        ok, err = _send_email_and_log(
+            request.user, charter.guest_email, charter.guest_name,
+            d['subject'], d['message'], 'yacht_charter', charter.id,
+        )
+        if ok:
+            return Response({'message': 'Reply sent successfully.'})
+        return Response({'error': err}, status=500)
+
+
+# ── GENERIC INQUIRY REPLY MIXIN ───────────────────────────────────────────────
+class InquiryAdminMixin:
+    """Mixin for inquiry viewsets that support reply + status update"""
+    inquiry_type_label = 'general'
+
+    def _get_email_fields(self, obj):
+        """Returns (email, name) from inquiry object"""
+        for email_field in ['email', 'guest_email']:
+            email = getattr(obj, email_field, None)
+            if email:
+                break
+        for name_field in ['full_name', 'guest_name', 'contact_name']:
+            name = getattr(obj, name_field, None)
+            if name:
+                break
+        return email or '', name or ''
+
+    @action(detail=True, methods=['post'])
+    def reply(self, request, pk=None):
+        from .serializers import InquiryReplySerializer
+        obj = self.get_object()
+        ser = InquiryReplySerializer(data=request.data)
+        if not ser.is_valid():
+            return Response(ser.errors, status=400)
+        d = ser.validated_data
+        if d.get('new_status') and hasattr(obj, 'status'):
+            obj.status = d['new_status']
+            obj.save()
+        email, name = self._get_email_fields(obj)
+        if not email:
+            return Response({'error': 'No email address found on this record.'}, status=400)
+        ok, err = _send_email_and_log(
+            request.user, email, name,
+            d['subject'], d['message'], self.inquiry_type_label, obj.id,
+        )
+        if ok:
+            return Response({'message': f'Reply sent to {email}.'})
+        return Response({'error': err}, status=500)
+
+    @action(detail=True, methods=['patch'])
+    def update_status(self, request, pk=None):
+        obj = self.get_object()
+        new_status = request.data.get('status')
+        if not hasattr(obj, 'status'):
+            return Response({'error': 'This record has no status field.'}, status=400)
+        obj.status = new_status
+        obj.save()
+        return Response({'message': f'Status updated to {new_status}.'})
+
+
+# ── LEASE INQUIRY ADMIN VIEWSET ───────────────────────────────────────────────
+class LeaseInquiryAdminViewSet(InquiryAdminMixin, viewsets.ModelViewSet):
+    permission_classes    = [IsAdminUser]
+    inquiry_type_label    = 'lease_inquiry'
+    filter_backends       = [filters.SearchFilter]
+    search_fields         = ['guest_name', 'guest_email', 'reference']
+
+    def get_queryset(self):
+        return LeaseInquiry.objects.select_related('aircraft', 'yacht').order_by('-created_at')
+
+    def get_serializer_class(self):
+        from .serializers import LeaseInquiryAdminSerializer
+        return LeaseInquiryAdminSerializer
+
+
+# ── CONTACT INQUIRY ADMIN VIEWSET ─────────────────────────────────────────────
+class ContactInquiryAdminViewSet(InquiryAdminMixin, viewsets.ModelViewSet):
+    permission_classes = [IsAdminUser]
+    inquiry_type_label = 'contact'
+    filter_backends    = [filters.SearchFilter]
+    search_fields      = ['full_name', 'email', 'subject', 'reference']
+
+    def get_queryset(self):
+        return ContactInquiry.objects.order_by('-created_at')
+
+    def get_serializer_class(self):
+        from .serializers import ContactInquiryAdminSerializer
+        return ContactInquiryAdminSerializer
+
+
+# ── GROUP CHARTER ADMIN VIEWSET ───────────────────────────────────────────────
+class GroupCharterAdminViewSet(InquiryAdminMixin, viewsets.ModelViewSet):
+    permission_classes = [IsAdminUser]
+    inquiry_type_label = 'group_charter'
+    filter_backends    = [filters.SearchFilter]
+    search_fields      = ['contact_name', 'email', 'reference']
+
+    def get_queryset(self):
+        return GroupCharterInquiry.objects.order_by('-created_at')
+
+    def get_serializer_class(self):
+        from .serializers import GroupCharterInquiryAdminSerializer
+        return GroupCharterInquiryAdminSerializer
+
+
+# ── AIR CARGO ADMIN VIEWSET ───────────────────────────────────────────────────
+class AirCargoAdminViewSet(InquiryAdminMixin, viewsets.ModelViewSet):
+    permission_classes = [IsAdminUser]
+    inquiry_type_label = 'air_cargo'
+    filter_backends    = [filters.SearchFilter]
+    search_fields      = ['contact_name', 'email', 'reference', 'cargo_type']
+
+    def get_queryset(self):
+        return AirCargoInquiry.objects.order_by('-created_at')
+
+    def get_serializer_class(self):
+        from .serializers import AirCargoInquiryAdminSerializer
+        return AirCargoInquiryAdminSerializer
+
+
+# ── AIRCRAFT SALES ADMIN VIEWSET ──────────────────────────────────────────────
+class AircraftSalesAdminViewSet(InquiryAdminMixin, viewsets.ModelViewSet):
+    permission_classes = [IsAdminUser]
+    inquiry_type_label = 'aircraft_sales'
+    filter_backends    = [filters.SearchFilter]
+    search_fields      = ['contact_name', 'email', 'reference', 'inquiry_type']
+
+    def get_queryset(self):
+        return AircraftSalesInquiry.objects.order_by('-created_at')
+
+    def get_serializer_class(self):
+        from .serializers import AircraftSalesInquiryAdminSerializer
+        return AircraftSalesInquiryAdminSerializer
+
+
+# ── FLIGHT INQUIRY ADMIN VIEWSET ──────────────────────────────────────────────
+class FlightInquiryAdminViewSet(InquiryAdminMixin, viewsets.ModelViewSet):
+    permission_classes = [IsAdminUser]
+    inquiry_type_label = 'flight_inquiry'
+    filter_backends    = [filters.SearchFilter]
+    search_fields      = ['guest_name', 'guest_email', 'reference']
+
+    def get_queryset(self):
+        return FlightInquiry.objects.order_by('-created_at')
+
+    def get_serializer_class(self):
+        from .serializers import FlightInquirySerializer
+        return FlightInquirySerializer
+
+
+# ── MARKETPLACE BOOKING ADMIN VIEWSET ─────────────────────────────────────────
+class MarketplaceBookingAdminViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAdminUser]
+    filter_backends    = [filters.SearchFilter]
+    search_fields      = ['client__username', 'client__email', 'aircraft__name', 'reference']
+
+    def get_queryset(self):
+        return MarketplaceBooking.objects.select_related(
+            'client', 'aircraft', 'aircraft__owner', 'membership'
+        ).order_by('-created_at')
+
+    def get_serializer_class(self):
+        from .serializers import (
+            MarketplaceBookingAdminSerializer,
+            MarketplaceBookingCreateAdminSerializer,
+        )
+        if self.action == 'create':
+            return MarketplaceBookingCreateAdminSerializer
+        return MarketplaceBookingAdminSerializer
+
+    def perform_create(self, serializer):
+        """Admin creates booking — auto-calc commission & net"""
+        d          = serializer.validated_data
+        gross      = d['gross_amount_usd']
+        comm_pct   = d.get('commission_pct', Decimal('10'))
+        comm_usd   = (gross * comm_pct / 100).quantize(Decimal('0.01'), ROUND_HALF_UP)
+        net        = gross - comm_usd
+        serializer.save(commission_usd=comm_usd, net_owner_usd=net)
+
+    @action(detail=True, methods=['post'])
+    def send_confirmation(self, request, pk=None):
+        """Email booking confirmation to client"""
+        booking = self.get_object()
+        custom  = request.data.get('message', '')
+        body    = custom or (
+            f"Dear {booking.client.get_full_name() or booking.client.username},\n\n"
+            f"Your booking has been confirmed. Here are your details:\n\n"
+            f"Booking Ref: {str(booking.reference)[:12]}\n"
+            f"Route:       {booking.origin} → {booking.destination}\n"
+            f"Departure:   {booking.departure_datetime}\n"
+            f"Aircraft:    {booking.aircraft.name}\n"
+            f"Passengers:  {booking.passenger_count}\n"
+            f"Total:       USD ${booking.gross_amount_usd:,.2f}\n\n"
+            f"Your concierge will be in touch with further details.\n\n"
+            f"Warm regards,\nVJetaway Operations Team"
+        )
+        ok, err = _send_email_and_log(
+            request.user, booking.client.email,
+            booking.client.get_full_name(),
+            f"Booking Confirmed – {booking.origin} → {booking.destination} | VJetaway",
+            body, 'marketplace_booking', booking.id,
+        )
+        if ok:
+            return Response({'message': 'Confirmation email sent.'})
+        return Response({'error': err}, status=500)
+
+    @action(detail=True, methods=['patch'])
+    def update_status(self, request, pk=None):
+        booking = self.get_object()
+        new_status = request.data.get('status')
+        valid = [s[0] for s in MarketplaceBooking.STATUS_CHOICES]
+        if new_status not in valid:
+            return Response({'error': 'Invalid status.'}, status=400)
+        old = booking.status
+        booking.status = new_status
+        booking.save()
+        return Response({'message': f'Status changed from {old} to {new_status}.'})
+
+
+# ── USER MANAGEMENT ADMIN VIEWSET ─────────────────────────────────────────────
+class UserAdminViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAdminUser]
+    filter_backends    = [filters.SearchFilter]
+    search_fields      = ['username', 'email', 'first_name', 'last_name', 'company']
+
+    def get_queryset(self):
+        return User.objects.select_related('membership', 'membership__tier').order_by('-created_at')
+
+    def get_serializer_class(self):
+        from .serializers import UserAdminSerializer
+        return UserAdminSerializer
+
+    @action(detail=True, methods=['post'])
+    def toggle_active(self, request, pk=None):
+        user = self.get_object()
+        user.is_active = not user.is_active
+        user.save()
+        state = 'activated' if user.is_active else 'deactivated'
+        return Response({'message': f'User {state}.', 'is_active': user.is_active})
+
+    @action(detail=True, methods=['post'])
+    def send_email(self, request, pk=None):
+        from .serializers import SendEmailSerializer
+        user = self.get_object()
+        ser = SendEmailSerializer(data=request.data)
+        if not ser.is_valid():
+            return Response(ser.errors, status=400)
+        d = ser.validated_data
+        ok, err = _send_email_and_log(
+            request.user, user.email, user.get_full_name(),
+            d['subject'], d['body'], d.get('inquiry_type', 'general'),
+        )
+        if ok:
+            return Response({'message': f'Email sent to {user.email}.'})
+        return Response({'error': err}, status=500)
+
+
+# ── ADMIN OVERVIEW EXTENDED ───────────────────────────────────────────────────
+class AdminOverviewViewSet(viewsets.ViewSet):
+    """Extended overview stats for new admin tabs"""
+    permission_classes = [IsAdminUser]
+
+    @action(detail=False, methods=['get'])
+    def inquiries_summary(self, request):
+        return Response({
+            'flight_bookings':  FlightBooking.objects.count(),
+            'yacht_charters':   YachtCharter.objects.count(),
+            'lease_inquiries':  LeaseInquiry.objects.count(),
+            'flight_inquiries': FlightInquiry.objects.count(),
+            'contacts':         ContactInquiry.objects.count(),
+            'group_charters':   GroupCharterInquiry.objects.count(),
+            'air_cargo':        AirCargoInquiry.objects.count(),
+            'aircraft_sales':   AircraftSalesInquiry.objects.count(),
+            'pending_flight_bookings': FlightBooking.objects.filter(status='inquiry').count(),
+            'pending_yacht_charters':  YachtCharter.objects.filter(status='inquiry').count(),
+            'pending_lease':           LeaseInquiry.objects.filter(status='pending').count(),
+            'pending_contacts':        ContactInquiry.objects.count(),
+            'pending_group_charters':  GroupCharterInquiry.objects.filter(status='pending').count(),
+            'pending_air_cargo':       AirCargoInquiry.objects.filter(status='pending').count(),
+            'pending_aircraft_sales':  AircraftSalesInquiry.objects.filter(status='pending').count(),
+        })
+
+    @action(detail=False, methods=['get'])
+    def users_summary(self, request):
+        return Response({
+            'total_users':    User.objects.count(),
+            'clients':        User.objects.filter(role='client').count(),
+            'owners':         User.objects.filter(role='owner').count(),
+            'active_members': Membership.objects.filter(status='active').count(),
+            'expired':        Membership.objects.filter(status='expired').count(),
         })

@@ -1,9 +1,10 @@
-// src/services/api.js
+// src/services/api.js — FULL REPLACEMENT
+// Includes all existing endpoints + new admin CRUD endpoints
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
 
 // ============================================================================
-// PART 1: PUBLIC APIs (No Authentication Required)
+// CORE FETCH HELPERS
 // ============================================================================
 
 async function request(endpoint, options = {}) {
@@ -12,112 +13,27 @@ async function request(endpoint, options = {}) {
     headers: { 'Content-Type': 'application/json', ...options.headers },
     ...options,
   };
-  if (config.body && typeof config.body !== 'string') {
-    config.body = JSON.stringify(config.body);
-  }
-  const res = await fetch(url, config);
+  if (config.body && typeof config.body !== 'string') config.body = JSON.stringify(config.body);
+  const res  = await fetch(url, config);
   const data = await res.json();
   if (!res.ok) throw { status: res.status, data };
   return data;
 }
 
-// ── Airports ──────────────────────────────────────────────────────────────────
-export const searchAirports = (q) =>
-  request(`/airports/?search=${encodeURIComponent(q)}`);
-
-// ── Aircraft ──────────────────────────────────────────────────────────────────
-export const getAircraft = (params = '') =>
-  request(`/aircraft/${params}`);
-
-// ── Yachts ────────────────────────────────────────────────────────────────────
-export const getYachts = (params = '') =>
-  request(`/yachts/${params}`);
-
-// ── Flight Bookings ───────────────────────────────────────────────────────────
-export const createFlightBooking = (data) =>
-  request('/flight-bookings/', { method: 'POST', body: data });
-
-export const trackFlightBooking = (reference) =>
-  request(`/flight-bookings/track/${reference}/`);
-
-export const getMyFlightBookings = (email) =>
-  request(`/flight-bookings/?email=${encodeURIComponent(email)}`);
-
-// ── Yacht Charters ────────────────────────────────────────────────────────────
-export const createYachtCharter = (data) =>
-  request('/yacht-charters/', { method: 'POST', body: data });
-
-export const trackYachtCharter = (reference) =>
-  request(`/yacht-charters/track/${reference}/`);
-
-// ── Lease Inquiries ───────────────────────────────────────────────────────────
-export const createLeaseInquiry = (data) =>
-  request('/lease-inquiries/', { method: 'POST', body: data });
-
-// ── Flight Inquiries ──────────────────────────────────────────────────────────
-export const createFlightInquiry = (data) =>
-  request('/flight-inquiries/', { method: 'POST', body: data });
-
-// ── Quick Quote ───────────────────────────────────────────────────────────────
-export const getQuickQuote = (data) =>
-  request('/quick-quote/', { method: 'POST', body: data });
-
-// ── Contact ───────────────────────────────────────────────────────────────────
-export const createContactInquiry = (data) =>
-  request('/contact/', { method: 'POST', body: data });
-
-// ── Group Charter ─────────────────────────────────────────────────────────────
-export const createGroupCharterInquiry = (data) =>
-  request('/group-charters/', { method: 'POST', body: data });
-
-export const trackGroupCharter = (reference) =>
-  request(`/group-charters/track/${reference}/`);
-
-// ── Air Cargo ─────────────────────────────────────────────────────────────────
-export const createAirCargoInquiry = (data) =>
-  request('/air-cargo/', { method: 'POST', body: data });
-
-export const trackAirCargo = (reference) =>
-  request(`/air-cargo/track/${reference}/`);
-
-// ── Aircraft Sales ────────────────────────────────────────────────────────────
-export const createAircraftSalesInquiry = (data) =>
-  request('/aircraft-sales/', { method: 'POST', body: data });
-
-export const trackAircraftSales = (reference) =>
-  request(`/aircraft-sales/track/${reference}/`);
-
-
-// ============================================================================
-// PART 2: MEMBERSHIP APIS (Authentication Required)
-// ============================================================================
-
-// ── Token helpers ─────────────────────────────────────────────────────────────
-export const getAccessToken = () => localStorage.getItem('vj_access');
+export const getAccessToken  = () => localStorage.getItem('vj_access');
 export const getRefreshToken = () => localStorage.getItem('vj_refresh');
-
 export const saveTokens = ({ access, refresh }) => {
   localStorage.setItem('vj_access', access);
   localStorage.setItem('vj_refresh', refresh);
 };
-
 export const clearTokens = () => {
   localStorage.removeItem('vj_access');
   localStorage.removeItem('vj_refresh');
   localStorage.removeItem('vj_user');
 };
+export const saveUser = (user) => localStorage.setItem('vj_user', JSON.stringify(user));
+export const getUser  = () => { const u = localStorage.getItem('vj_user'); return u ? JSON.parse(u) : null; };
 
-// ── Save/load user data ───────────────────────────────────────────────────────
-export const saveUser = (user) => {
-  localStorage.setItem('vj_user', JSON.stringify(user));
-};
-
-export const getUser = () => {
-  const user = localStorage.getItem('vj_user');
-  return user ? JSON.parse(user) : null;
-};
-
-// ── Base fetch with auto-refresh ──────────────────────────────────────────────
 async function authFetch(endpoint, options = {}) {
   const token = getAccessToken();
   const headers = {
@@ -125,314 +41,239 @@ async function authFetch(endpoint, options = {}) {
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...options.headers,
   };
-  
-  let config = {
-    ...options,
-    headers,
-  };
-  
-  if (config.body && typeof config.body !== 'string') {
-    config.body = JSON.stringify(config.body);
-  }
-  
+  let config = { ...options, headers };
+  if (config.body && typeof config.body !== 'string') config.body = JSON.stringify(config.body);
+
   let res = await fetch(`${BASE_URL}${endpoint}`, config);
 
-  // Try token refresh on 401
   if (res.status === 401 && getRefreshToken()) {
     try {
-      const refreshRes = await fetch(`${BASE_URL}/auth/token/refresh/`, {
+      const rr = await fetch(`${BASE_URL}/auth/token/refresh/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ refresh: getRefreshToken() }),
       });
-      
-      if (refreshRes.ok) {
-        const data = await refreshRes.json();
-        saveTokens({ access: data.access, refresh: getRefreshToken() });
-        
-        // Retry original request with new token
-        headers.Authorization = `Bearer ${data.access}`;
+      if (rr.ok) {
+        const rd = await rr.json();
+        saveTokens({ access: rd.access, refresh: getRefreshToken() });
+        headers.Authorization = `Bearer ${rd.access}`;
         config.headers = headers;
         res = await fetch(`${BASE_URL}${endpoint}`, config);
       } else {
-        // Refresh failed - clear tokens and redirect to login
         clearTokens();
-        if (typeof window !== 'undefined') {
-          window.location.href = '/membership/login';
-        }
-        throw new Error('Session expired. Please login again.');
+        window.location.href = '/membership/login';
+        throw new Error('Session expired.');
       }
-    } catch (error) {
-      clearTokens();
-      throw error;
-    }
+    } catch (e) { clearTokens(); throw e; }
   }
 
   if (!res.ok) {
-    const errorData = await res.json().catch(() => ({}));
-    const error = new Error(errorData.detail || errorData.message || 'Request failed');
-    error.status = res.status;
-    error.data = errorData;
-    throw error;
+    const err = new Error();
+    err.status = res.status;
+    try { err.data = await res.json(); err.message = err.data.detail || err.data.message || err.data.error || 'Request failed'; }
+    catch { err.message = 'Request failed'; err.data = {}; }
+    throw err;
   }
-  
   if (res.status === 204) return null;
   return res.json();
 }
 
-// ── AUTHENTICATION ────────────────────────────────────────────────────────────
-export const registerUser = (data) => 
-  authFetch('/auth/register/', { method: 'POST', body: data });
+// ============================================================================
+// PART 1: PUBLIC APIs
+// ============================================================================
 
-export const loginUser = async (data) => {
-  const response = await authFetch('/auth/login/', { method: 'POST', body: data });
-  if (response.access && response.refresh) {
-    saveTokens({ access: response.access, refresh: response.refresh });
-    if (response.user) {
-      saveUser(response.user);
-    }
-  }
-  return response;
+export const searchAirports        = (q)    => request(`/airports/?search=${encodeURIComponent(q)}`);
+export const getAircraft           = (p='') => request(`/aircraft/${p}`);
+export const getYachts             = (p='') => request(`/yachts/${p}`);
+export const createFlightBooking   = (d)    => request('/flight-bookings/', { method: 'POST', body: d });
+export const trackFlightBooking    = (ref)  => request(`/flight-bookings/track/${ref}/`);
+export const getMyFlightBookings   = (email)=> request(`/flight-bookings/?email=${encodeURIComponent(email)}`);
+export const createYachtCharter    = (d)    => request('/yacht-charters/', { method: 'POST', body: d });
+export const trackYachtCharter     = (ref)  => request(`/yacht-charters/track/${ref}/`);
+export const createLeaseInquiry    = (d)    => request('/lease-inquiries/', { method: 'POST', body: d });
+export const createFlightInquiry   = (d)    => request('/flight-inquiries/', { method: 'POST', body: d });
+export const getQuickQuote         = (d)    => request('/quick-quote/', { method: 'POST', body: d });
+export const createContactInquiry  = (d)    => request('/contact/', { method: 'POST', body: d });
+export const createGroupCharterInquiry = (d)=> request('/group-charters/', { method: 'POST', body: d });
+export const trackGroupCharter     = (ref)  => request(`/group-charters/track/${ref}/`);
+export const createAirCargoInquiry = (d)    => request('/air-cargo/', { method: 'POST', body: d });
+export const trackAirCargo         = (ref)  => request(`/air-cargo/track/${ref}/`);
+export const createAircraftSalesInquiry = (d)=> request('/aircraft-sales/', { method: 'POST', body: d });
+export const trackAircraftSales    = (ref)  => request(`/aircraft-sales/track/${ref}/`);
+
+// ============================================================================
+// PART 2: MEMBERSHIP APIs
+// ============================================================================
+
+// Auth
+export const registerUser  = (d)  => authFetch('/auth/register/', { method: 'POST', body: d });
+export const loginUser     = async (d) => {
+  const r = await authFetch('/auth/login/', { method: 'POST', body: d });
+  if (r.tokens) saveTokens({ access: r.tokens.access, refresh: r.tokens.refresh });
+  if (r.user)   saveUser(r.user);
+  return r;
 };
-
-export const logoutUser = async () => {
-  const refresh = getRefreshToken();
-  if (refresh) {
-    try {
-      await authFetch('/auth/logout/', { method: 'POST', body: { refresh } });
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  }
+export const logoutUser    = async () => {
+  try { await authFetch('/auth/logout/', { method: 'POST', body: { refresh: getRefreshToken() } }); } catch {}
   clearTokens();
 };
+export const getMe             = ()  => authFetch('/auth/me/');
+export const updateProfile     = (d) => authFetch('/auth/update_profile/', { method: 'PATCH', body: d });
 
-export const getMe = () => authFetch('/auth/me/');
+// Membership
+export const getMembershipTiers  = ()  => authFetch('/membership-tiers/');
+export const getMyMembership     = ()  => authFetch('/memberships/my_membership/');
+export const subscribeMembership = (d) => authFetch('/memberships/subscribe/', { method: 'POST', body: d });
+export const cancelMembership    = ()  => authFetch('/memberships/cancel/', { method: 'POST' });
 
-export const updateProfile = (data) => 
-  authFetch('/auth/update_profile/', { method: 'PATCH', body: data });
+// Marketplace
+export const getMarketplaceAircraft  = (p='') => authFetch(`/marketplace/aircraft/${p}`);
+export const getAircraftDetail       = (id)   => authFetch(`/marketplace/aircraft/${id}/`);
+export const createAircraft          = (d)    => authFetch('/marketplace/aircraft/', { method: 'POST', body: d });
+export const updateAircraft          = (id,d) => authFetch(`/marketplace/aircraft/${id}/`, { method: 'PATCH', body: d });
+export const deleteAircraft          = (id)   => authFetch(`/marketplace/aircraft/${id}/`, { method: 'DELETE' });
+export const approveAircraft         = (id)   => authFetch(`/marketplace/aircraft/${id}/approve/`, { method: 'POST' });
+export const updateAircraftStatus    = (id,s) => authFetch(`/marketplace/aircraft/${id}/update_status/`, { method: 'POST', body: { status: s } });
 
-export const changePassword = (data) => 
-  authFetch('/auth/change_password/', { method: 'POST', body: data });
+// Maintenance
+export const getMaintenanceLogs  = (id='') => authFetch(`/marketplace/maintenance/${id ? `?aircraft=${id}` : ''}`);
+export const createMaintenanceLog = (d)    => authFetch('/marketplace/maintenance/', { method: 'POST', body: d });
+export const updateMaintenanceLog = (id,d) => authFetch(`/marketplace/maintenance/${id}/`, { method: 'PATCH', body: d });
+export const deleteMaintenanceLog = (id)   => authFetch(`/marketplace/maintenance/${id}/`, { method: 'DELETE' });
 
-export const requestPasswordReset = (email) => 
-  authFetch('/auth/password-reset/', { method: 'POST', body: { email } });
+// Bookings
+export const getMyBookings  = (p='') => authFetch(`/marketplace/bookings/${p}`);
+export const getBooking     = (id)   => authFetch(`/marketplace/bookings/${id}/`);
+export const createBooking  = (d)    => authFetch('/marketplace/bookings/', { method: 'POST', body: d });
+export const cancelBooking  = (id)   => authFetch(`/marketplace/bookings/${id}/cancel/`, { method: 'POST' });
 
-export const resetPassword = (data) => 
-  authFetch('/auth/password-reset/confirm/', { method: 'POST', body: data });
+// Payments
+export const getPaymentHistory = (p='') => authFetch(`/payments/${p}`);
 
-// ── MEMBERSHIP TIERS ──────────────────────────────────────────────────────────
-export const getMembershipTiers = () => authFetch('/membership-tiers/');
-export const getMembershipTier = (id) => authFetch(`/membership-tiers/${id}/`);
+// Saved routes
+export const getSavedRoutes   = ()  => authFetch('/saved-routes/');
+export const createSavedRoute = (d) => authFetch('/saved-routes/', { method: 'POST', body: d });
+export const deleteSavedRoute = (id)=> authFetch(`/saved-routes/${id}/`, { method: 'DELETE' });
 
-// ── MEMBERSHIP ────────────────────────────────────────────────────────────────
-export const getMyMembership = () => authFetch('/memberships/my_membership/');
-export const subscribeMembership = (data) => 
-  authFetch('/memberships/subscribe/', { method: 'POST', body: data });
-export const cancelMembership = () => 
-  authFetch('/memberships/cancel/', { method: 'POST' });
-export const renewMembership = () => 
-  authFetch('/memberships/renew/', { method: 'POST' });
-export const upgradeMembership = (tierId) => 
-  authFetch('/memberships/upgrade/', { method: 'POST', body: { tier_id: tierId } });
+// Disputes
+export const getDisputes    = (p='') => authFetch(`/disputes/${p}`);
+export const createDispute  = (d)    => authFetch('/disputes/', { method: 'POST', body: d });
+export const resolveDispute = (id,r) => authFetch(`/disputes/${id}/resolve/`, { method: 'POST', body: { resolution: r } });
 
-// ── MARKETPLACE AIRCRAFT ──────────────────────────────────────────────────────
-export const getMarketplaceAircraft = (params = '') => 
-  authFetch(`/marketplace/aircraft/${params}`);
-export const getAircraftDetail = (id) => 
-  authFetch(`/marketplace/aircraft/${id}/`);
-export const createAircraft = (data) => 
-  authFetch('/marketplace/aircraft/', { method: 'POST', body: data });
-export const updateAircraft = (id, data) => 
-  authFetch(`/marketplace/aircraft/${id}/`, { method: 'PATCH', body: data });
-export const deleteAircraft = (id) => 
-  authFetch(`/marketplace/aircraft/${id}/`, { method: 'DELETE' });
-export const approveAircraft = (id) => 
-  authFetch(`/marketplace/aircraft/${id}/approve/`, { method: 'POST' });
-export const updateAircraftStatus = (id, status) => 
-  authFetch(`/marketplace/aircraft/${id}/update_status/`, { method: 'POST', body: { status } });
-export const logFlightHours = (id, hours) => 
-  authFetch(`/marketplace/aircraft/${id}/log_flight_hours/`, { method: 'POST', body: { hours } });
+// Commission
+export const getCommissionSettings = (p='') => authFetch(`/commissions/${p}`);
+export const setCommissionRate     = (d)    => authFetch('/commissions/', { method: 'POST', body: d });
 
-// ── MAINTENANCE ───────────────────────────────────────────────────────────────
-export const getMaintenanceLogs = (aircraftId = '') => 
-  authFetch(`/marketplace/maintenance/${aircraftId ? `?aircraft=${aircraftId}` : ''}`);
-export const getMaintenanceLog = (id) => 
-  authFetch(`/marketplace/maintenance/${id}/`);
-export const createMaintenanceLog = (data) => 
-  authFetch('/marketplace/maintenance/', { method: 'POST', body: data });
-export const updateMaintenanceLog = (id, data) => 
-  authFetch(`/marketplace/maintenance/${id}/`, { method: 'PATCH', body: data });
-export const deleteMaintenanceLog = (id) => 
-  authFetch(`/marketplace/maintenance/${id}/`, { method: 'DELETE' });
-export const getMaintenanceAlerts = () => 
-  authFetch('/marketplace/maintenance/alerts/');
-
-// ── BOOKINGS ──────────────────────────────────────────────────────────────────
-export const getMyBookings = (params = '') => 
-  authFetch(`/marketplace/bookings/${params}`);
-export const getBooking = (id) => 
-  authFetch(`/marketplace/bookings/${id}/`);
-export const createBooking = (data) => 
-  authFetch('/marketplace/bookings/', { method: 'POST', body: data });
-export const cancelBooking = (id) => 
-  authFetch(`/marketplace/bookings/${id}/cancel/`, { method: 'POST' });
-export const trackBooking = (ref) => 
-  authFetch(`/marketplace/bookings/track/?reference=${ref}`);
-export const getBookingReceipt = (id) => 
-  authFetch(`/marketplace/bookings/${id}/receipt/`);
-
-// ── PAYMENTS ──────────────────────────────────────────────────────────────────
-export const getPaymentHistory = (params = '') => 
-  authFetch(`/payments/${params}`);
-export const getPayment = (id) => 
-  authFetch(`/payments/${id}/`);
-export const createPaymentIntent = (data) => 
-  authFetch('/payments/create-intent/', { method: 'POST', body: data });
-export const confirmPayment = (data) => 
-  authFetch('/payments/confirm/', { method: 'POST', body: data });
-export const getPaymentMethods = () => 
-  authFetch('/payments/methods/');
-export const addPaymentMethod = (data) => 
-  authFetch('/payments/methods/', { method: 'POST', body: data });
-export const deletePaymentMethod = (id) => 
-  authFetch(`/payments/methods/${id}/`, { method: 'DELETE' });
-export const setDefaultPaymentMethod = (id) => 
-  authFetch(`/payments/methods/${id}/set_default/`, { method: 'POST' });
-
-// ── SAVED ROUTES ──────────────────────────────────────────────────────────────
-export const getSavedRoutes = () => authFetch('/saved-routes/');
-export const getSavedRoute = (id) => authFetch(`/saved-routes/${id}/`);
-export const createSavedRoute = (data) => 
-  authFetch('/saved-routes/', { method: 'POST', body: data });
-export const updateSavedRoute = (id, data) => 
-  authFetch(`/saved-routes/${id}/`, { method: 'PATCH', body: data });
-export const deleteSavedRoute = (id) => 
-  authFetch(`/saved-routes/${id}/`, { method: 'DELETE' });
-
-// ── DISPUTES ──────────────────────────────────────────────────────────────────
-export const getDisputes = (params = '') => 
-  authFetch(`/disputes/${params}`);
-export const getDispute = (id) => 
-  authFetch(`/disputes/${id}/`);
-export const createDispute = (data) => 
-  authFetch('/disputes/', { method: 'POST', body: data });
-export const resolveDispute = (id, resolution) => 
-  authFetch(`/disputes/${id}/resolve/`, { method: 'POST', body: { resolution } });
-export const addDisputeMessage = (id, message) => 
-  authFetch(`/disputes/${id}/messages/`, { method: 'POST', body: { message } });
-
-// ── COMMISSION (admin only) ───────────────────────────────────────────────────
-export const getCommissionSettings = (params = '') => 
-  authFetch(`/commissions/${params}`);
-export const getCurrentCommission = () => 
-  authFetch('/commissions/current/');
-export const setCommissionRate = (data) => 
-  authFetch('/commissions/', { method: 'POST', body: data });
-export const updateCommissionRate = (id, data) => 
-  authFetch(`/commissions/${id}/`, { method: 'PATCH', body: data });
-
-// ── DASHBOARDS ────────────────────────────────────────────────────────────────
+// Dashboards
 export const getClientDashboard = () => authFetch('/dashboard/client/summary/');
-export const getOwnerDashboard = () => authFetch('/dashboard/owner/summary/');
-export const getAdminDashboard = () => authFetch('/dashboard/admin/summary/');
-
-// ── OWNER STATISTICS ──────────────────────────────────────────────────────────
-export const getOwnerEarnings = (params = '') => 
-  authFetch(`/dashboard/owner/earnings/${params}`);
-export const getOwnerAircraftStats = () => 
-  authFetch('/dashboard/owner/aircraft-stats/');
-export const getOwnerBookings = (params = '') => 
-  authFetch(`/dashboard/owner/bookings/${params}`);
-
-// ── ADMIN STATISTICS ──────────────────────────────────────────────────────────
-export const getAdminStats = () => authFetch('/dashboard/admin/stats/');
-export const getAdminRevenue = (params = '') => 
-  authFetch(`/dashboard/admin/revenue/${params}`);
-export const getAdminUsers = (params = '') => 
-  authFetch(`/dashboard/admin/users/${params}`);
-export const getAdminBookings = (params = '') => 
-  authFetch(`/dashboard/admin/bookings/${params}`);
-export const getAdminAircraft = (params = '') => 
-  authFetch(`/dashboard/admin/aircraft/${params}`);
-
-// ── STRIPE INTEGRATION ────────────────────────────────────────────────────────
-export const createStripeSetupIntent = () => 
-  authFetch('/payments/setup-intent/', { method: 'POST' });
-export const createStripePaymentIntent = (data) => 
-  authFetch('/payments/payment-intent/', { method: 'POST', body: data });
-export const getStripePublishableKey = () => 
-  authFetch('/payments/config/');
-
-// ── MEMBERSHIP BENEFITS ───────────────────────────────────────────────────────
-export const getMembershipBenefits = () => authFetch('/membership-benefits/');
-export const calculateMembershipDiscount = (tierId, amount) => 
-  authFetch(`/memberships/calculate-discount/?tier=${tierId}&amount=${amount}`);
-
-// ── NOTIFICATIONS ─────────────────────────────────────────────────────────────
-export const getNotifications = () => authFetch('/notifications/');
-export const markNotificationRead = (id) => 
-  authFetch(`/notifications/${id}/read/`, { method: 'POST' });
-export const markAllNotificationsRead = () => 
-  authFetch('/notifications/read-all/', { method: 'POST' });
-
+export const getOwnerDashboard  = () => authFetch('/dashboard/owner/summary/');
+export const getAdminDashboard  = () => authFetch('/dashboard/admin/summary/');
 
 // ============================================================================
-// PART 3: HELPER FUNCTIONS
+// PART 3: ADMIN CRUD APIs
 // ============================================================================
 
-// ── Check if user is authenticated ────────────────────────────────────────────
-export const isAuthenticated = () => {
-  return !!getAccessToken();
-};
+// ── Email ──────────────────────────────────────────────────────────────────
+export const getEmailLogs  = (p='') => authFetch(`/admin/email-logs/${p}`);
+export const sendAdminEmail = (d)   => authFetch('/admin/email-logs/send/', { method: 'POST', body: d });
 
-// ── Check user role ───────────────────────────────────────────────────────────
-export const getUserRole = () => {
-  const user = getUser();
-  return user?.role || null;
-};
+// ── Price Calculator ───────────────────────────────────────────────────────
+export const calculatePrice = (d) => authFetch('/admin/price-calculator/calculate/', { method: 'POST', body: d });
 
-// ── Check if user has specific role ───────────────────────────────────────────
-export const hasRole = (role) => {
-  const userRole = getUserRole();
-  return userRole === role;
-};
+// ── Flight Bookings (Admin) ────────────────────────────────────────────────
+export const adminGetFlightBookings   = (p='')    => authFetch(`/admin/flight-bookings/${p}`);
+export const adminGetFlightBooking    = (id)      => authFetch(`/admin/flight-bookings/${id}/`);
+export const adminCreateFlightBooking = (d)       => authFetch('/admin/flight-bookings/', { method: 'POST', body: d });
+export const adminUpdateFlightBooking = (id, d)   => authFetch(`/admin/flight-bookings/${id}/`, { method: 'PATCH', body: d });
+export const adminDeleteFlightBooking = (id)      => authFetch(`/admin/flight-bookings/${id}/`, { method: 'DELETE' });
+export const adminSetFlightPrice      = (id, d)   => authFetch(`/admin/flight-bookings/${id}/set_price/`, { method: 'POST', body: d });
+export const adminReplyFlightBooking  = (id, d)   => authFetch(`/admin/flight-bookings/${id}/reply/`, { method: 'POST', body: d });
+export const adminUpdateFlightStatus  = (id, s)   => authFetch(`/admin/flight-bookings/${id}/update_status/`, { method: 'PATCH', body: { status: s } });
 
-// ── Check if user is admin ────────────────────────────────────────────────────
-export const isAdmin = () => {
-  return hasRole('admin');
-};
+// ── Yacht Charters (Admin) ─────────────────────────────────────────────────
+export const adminGetYachtCharters   = (p='')   => authFetch(`/admin/yacht-charters/${p}`);
+export const adminGetYachtCharter    = (id)     => authFetch(`/admin/yacht-charters/${id}/`);
+export const adminCreateYachtCharter = (d)      => authFetch('/admin/yacht-charters/', { method: 'POST', body: d });
+export const adminUpdateYachtCharter = (id, d)  => authFetch(`/admin/yacht-charters/${id}/`, { method: 'PATCH', body: d });
+export const adminDeleteYachtCharter = (id)     => authFetch(`/admin/yacht-charters/${id}/`, { method: 'DELETE' });
+export const adminSetYachtPrice      = (id, d)  => authFetch(`/admin/yacht-charters/${id}/set_price/`, { method: 'POST', body: d });
+export const adminReplyYachtCharter  = (id, d)  => authFetch(`/admin/yacht-charters/${id}/reply/`, { method: 'POST', body: d });
 
-// ── Check if user is owner ────────────────────────────────────────────────────
-export const isOwner = () => {
-  return hasRole('owner');
-};
+// ── Lease Inquiries (Admin) ────────────────────────────────────────────────
+export const adminGetLeaseInquiries  = (p='')   => authFetch(`/admin/lease-inquiries/${p}`);
+export const adminGetLeaseInquiry    = (id)     => authFetch(`/admin/lease-inquiries/${id}/`);
+export const adminUpdateLeaseInquiry = (id, d)  => authFetch(`/admin/lease-inquiries/${id}/`, { method: 'PATCH', body: d });
+export const adminDeleteLeaseInquiry = (id)     => authFetch(`/admin/lease-inquiries/${id}/`, { method: 'DELETE' });
+export const adminReplyLeaseInquiry  = (id, d)  => authFetch(`/admin/lease-inquiries/${id}/reply/`, { method: 'POST', body: d });
+export const adminUpdateLeaseStatus  = (id, s)  => authFetch(`/admin/lease-inquiries/${id}/update_status/`, { method: 'PATCH', body: { status: s } });
 
-// ── Check if user is client ───────────────────────────────────────────────────
-export const isClient = () => {
-  return hasRole('client');
-};
+// ── Contacts (Admin) ───────────────────────────────────────────────────────
+export const adminGetContacts   = (p='')  => authFetch(`/admin/contacts/${p}`);
+export const adminGetContact    = (id)    => authFetch(`/admin/contacts/${id}/`);
+export const adminDeleteContact = (id)    => authFetch(`/admin/contacts/${id}/`, { method: 'DELETE' });
+export const adminReplyContact  = (id, d) => authFetch(`/admin/contacts/${id}/reply/`, { method: 'POST', body: d });
 
-// ── Get auth headers for manual requests ──────────────────────────────────────
-export const getAuthHeaders = () => {
-  const token = getAccessToken();
-  return token ? { Authorization: `Bearer ${token}` } : {};
-};
+// ── Group Charters (Admin) ─────────────────────────────────────────────────
+export const adminGetGroupCharters   = (p='')  => authFetch(`/admin/group-charters/${p}`);
+export const adminGetGroupCharter    = (id)    => authFetch(`/admin/group-charters/${id}/`);
+export const adminUpdateGroupCharter = (id, d) => authFetch(`/admin/group-charters/${id}/`, { method: 'PATCH', body: d });
+export const adminDeleteGroupCharter = (id)    => authFetch(`/admin/group-charters/${id}/`, { method: 'DELETE' });
+export const adminReplyGroupCharter  = (id, d) => authFetch(`/admin/group-charters/${id}/reply/`, { method: 'POST', body: d });
+export const adminUpdateGroupStatus  = (id, s) => authFetch(`/admin/group-charters/${id}/update_status/`, { method: 'PATCH', body: { status: s } });
 
-// ── Refresh token manually ────────────────────────────────────────────────────
-export const refreshAccessToken = async () => {
-  const refresh = getRefreshToken();
-  if (!refresh) throw new Error('No refresh token available');
-  
-  const response = await fetch(`${BASE_URL}/auth/token/refresh/`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ refresh }),
-  });
-  
-  if (!response.ok) throw new Error('Failed to refresh token');
-  
-  const data = await response.json();
-  saveTokens({ access: data.access, refresh });
-  return data.access;
+// ── Air Cargo (Admin) ──────────────────────────────────────────────────────
+export const adminGetAirCargo       = (p='')  => authFetch(`/admin/air-cargo/${p}`);
+export const adminGetAirCargoItem   = (id)    => authFetch(`/admin/air-cargo/${id}/`);
+export const adminUpdateAirCargo    = (id, d) => authFetch(`/admin/air-cargo/${id}/`, { method: 'PATCH', body: d });
+export const adminDeleteAirCargo    = (id)    => authFetch(`/admin/air-cargo/${id}/`, { method: 'DELETE' });
+export const adminReplyAirCargo     = (id, d) => authFetch(`/admin/air-cargo/${id}/reply/`, { method: 'POST', body: d });
+export const adminUpdateCargoStatus = (id, s) => authFetch(`/admin/air-cargo/${id}/update_status/`, { method: 'PATCH', body: { status: s } });
+
+// ── Aircraft Sales (Admin) ─────────────────────────────────────────────────
+export const adminGetAircraftSales       = (p='')  => authFetch(`/admin/aircraft-sales/${p}`);
+export const adminGetAircraftSale        = (id)    => authFetch(`/admin/aircraft-sales/${id}/`);
+export const adminUpdateAircraftSale     = (id, d) => authFetch(`/admin/aircraft-sales/${id}/`, { method: 'PATCH', body: d });
+export const adminDeleteAircraftSale     = (id)    => authFetch(`/admin/aircraft-sales/${id}/`, { method: 'DELETE' });
+export const adminReplyAircraftSale      = (id, d) => authFetch(`/admin/aircraft-sales/${id}/reply/`, { method: 'POST', body: d });
+export const adminUpdateAircraftSaleStatus = (id,s)=> authFetch(`/admin/aircraft-sales/${id}/update_status/`, { method: 'PATCH', body: { status: s } });
+
+// ── Flight Inquiries (Admin) ───────────────────────────────────────────────
+export const adminGetFlightInquiries  = (p='')  => authFetch(`/admin/flight-inquiries/${p}`);
+export const adminGetFlightInquiry    = (id)    => authFetch(`/admin/flight-inquiries/${id}/`);
+export const adminDeleteFlightInquiry = (id)    => authFetch(`/admin/flight-inquiries/${id}/`, { method: 'DELETE' });
+export const adminReplyFlightInquiry  = (id, d) => authFetch(`/admin/flight-inquiries/${id}/reply/`, { method: 'POST', body: d });
+
+// ── Marketplace Bookings (Admin) ───────────────────────────────────────────
+export const adminGetMpBookings         = (p='')  => authFetch(`/admin/marketplace-bookings/${p}`);
+export const adminGetMpBooking          = (id)    => authFetch(`/admin/marketplace-bookings/${id}/`);
+export const adminCreateMpBooking       = (d)     => authFetch('/admin/marketplace-bookings/', { method: 'POST', body: d });
+export const adminUpdateMpBooking       = (id, d) => authFetch(`/admin/marketplace-bookings/${id}/`, { method: 'PATCH', body: d });
+export const adminDeleteMpBooking       = (id)    => authFetch(`/admin/marketplace-bookings/${id}/`, { method: 'DELETE' });
+export const adminSendMpConfirmation    = (id, d) => authFetch(`/admin/marketplace-bookings/${id}/send_confirmation/`, { method: 'POST', body: d });
+export const adminUpdateMpBookingStatus = (id, s) => authFetch(`/admin/marketplace-bookings/${id}/update_status/`, { method: 'PATCH', body: { status: s } });
+
+// ── Users (Admin) ──────────────────────────────────────────────────────────
+export const adminGetUsers      = (p='')  => authFetch(`/admin/users/${p}`);
+export const adminGetUser       = (id)    => authFetch(`/admin/users/${id}/`);
+export const adminUpdateUser    = (id, d) => authFetch(`/admin/users/${id}/`, { method: 'PATCH', body: d });
+export const adminToggleUser    = (id)    => authFetch(`/admin/users/${id}/toggle_active/`, { method: 'POST' });
+export const adminEmailUser     = (id, d) => authFetch(`/admin/users/${id}/send_email/`, { method: 'POST', body: d });
+
+// ── Admin Overview ─────────────────────────────────────────────────────────
+export const adminGetInquiriesSummary = () => authFetch('/admin/overview/inquiries_summary/');
+export const adminGetUsersSummary     = () => authFetch('/admin/overview/users_summary/');
+
+// ============================================================================
+// PART 4: HELPERS
+// ============================================================================
+
+export const isAuthenticated = () => !!getAccessToken();
+export const getUserRole     = () => getUser()?.role || null;
+export const hasRole         = (r) => getUserRole() === r;
+export const isAdmin         = () => hasRole('admin');
+export const isOwner         = () => hasRole('owner');
+export const isClient        = () => hasRole('client');
+export const getAuthHeaders  = () => {
+  const t = getAccessToken();
+  return t ? { Authorization: `Bearer ${t}` } : {};
 };

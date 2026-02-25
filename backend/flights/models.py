@@ -728,3 +728,50 @@ class Dispute(models.Model):
 
     def __str__(self):
         return f"Dispute {str(self.reference)[:8]} – {self.subject[:40]}"
+    
+    
+    
+# ── ADD THIS TO YOUR EXISTING models.py ──────────────────────────────────────
+# This is the EmailLog model - append to the bottom of models.py
+
+import uuid
+from django.db import models
+from django.conf import settings
+
+
+class EmailLog(models.Model):
+    """Tracks all emails sent by admin to inquiry/booking contacts"""
+    INQUIRY_TYPE_CHOICES = [
+        ('flight_booking',      'Flight Booking'),
+        ('yacht_charter',       'Yacht Charter'),
+        ('lease_inquiry',       'Lease Inquiry'),
+        ('flight_inquiry',      'Flight Inquiry'),
+        ('contact',             'Contact'),
+        ('group_charter',       'Group Charter'),
+        ('air_cargo',           'Air Cargo'),
+        ('aircraft_sales',      'Aircraft Sales'),
+        ('marketplace_booking', 'Marketplace Booking'),
+        ('general',             'General'),
+    ]
+    reference    = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    sent_by      = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='sent_emails',
+    )
+    to_email     = models.EmailField()
+    to_name      = models.CharField(max_length=200, blank=True)
+    subject      = models.CharField(max_length=500)
+    body         = models.TextField()
+    inquiry_type = models.CharField(max_length=30, choices=INQUIRY_TYPE_CHOICES, default='general')
+    related_id   = models.IntegerField(null=True, blank=True, help_text="PK of the related inquiry/booking")
+    sent_at      = models.DateTimeField(auto_now_add=True)
+    success      = models.BooleanField(default=True)
+    error_msg    = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ['-sent_at']
+
+    def __str__(self):
+        return f"Email to {self.to_email} re: {self.inquiry_type} [{self.sent_at:%Y-%m-%d}]"
