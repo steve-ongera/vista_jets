@@ -633,7 +633,7 @@ export default function Home() {
             <span className="eyebrow">What We Offer</span>
             <h2>Luxury Travel, <em>Simplified</em></h2>
             <div className="gold-rule gold-rule-center" />
-            <p style={{ maxWidth: 540, margin: '0 auto', fontSize: '1rem' }}>From a single flight to a season-long yacht charter or a multi-year aircraft lease, VistaJets gives you direct access to the world's finest private travel assets — without the complexity.</p>
+            <p style={{ maxWidth: 540, margin: '0 auto', fontSize: '1rem' }}>From a single flight to a season-long yacht charter or a multi-year aircraft lease, NairobiJetHouse gives you direct access to the world's finest private travel assets — without the complexity.</p>
           </div>
           <div className="grid-4" style={{ marginTop: '3rem' }}>
             {SERVICES.map(({ icon, title, tagline, description, link, cta }) => (
@@ -700,14 +700,14 @@ export default function Home() {
         </section>
       )}
 
-      {/* ── Why VistaJets ─────────────────────────────────────────────────── */}
+      {/* ── Why NairobiJetHouse ─────────────────────────────────────────────────── */}
       <section className="section" style={{ background: 'var(--gray-50)' }}>
         <div className="container">
           <div className="text-center mb-4">
-            <span className="eyebrow">Why VistaJets</span>
+            <span className="eyebrow">Why NairobiJetHouse</span>
             <h2>The Standard Others <em>Aspire To</em></h2>
             <div className="gold-rule gold-rule-center" />
-            <p style={{ maxWidth: 520, margin: '0 auto' }}>With over 20 years serving heads of state, Fortune 500 executives, and discerning private travellers, VistaJets has perfected what private travel should feel like.</p>
+            <p style={{ maxWidth: 520, margin: '0 auto' }}>With over 20 years serving heads of state, Fortune 500 executives, and discerning private travellers, NairobiJetHouse has perfected what private travel should feel like.</p>
           </div>
           <div className="grid-3" style={{ marginTop: '3rem' }}>
             {WHY_US.map(({ icon, title, desc }) => (
@@ -743,7 +743,7 @@ export default function Home() {
       <section className="section">
         <div className="container">
           <div className="text-center mb-4">
-            <span className="eyebrow">The VistaJets Process</span>
+            <span className="eyebrow">The NairobiJetHouse Process</span>
             <h2>From Request to <em>Takeoff</em> in Three Steps</h2>
             <div className="gold-rule gold-rule-center" />
             <p style={{ maxWidth: 500, margin: '0 auto' }}>We've eliminated every unnecessary step. Our booking process is designed for busy people who value their time as much as their comfort.</p>
@@ -818,7 +818,7 @@ export default function Home() {
         <div className="container" style={{ maxWidth: 680 }}>
           <span className="eyebrow" style={{ color: 'var(--gold-light)' }}>Ready to Fly?</span>
           <h2 style={{ color: 'var(--white)', marginTop: '0.5rem', marginBottom: '1.25rem' }}>Your Private Jet is <em style={{ color: 'var(--gold-light)' }}>Waiting</em></h2>
-          <p style={{ color: 'rgba(255,255,255,0.65)', marginBottom: '2.5rem', fontSize: '1rem' }}>Whether you're flying solo or bringing an entire team, VistaJets has the right aircraft at the right price. Our concierge team is standing by 24 hours a day, seven days a week.</p>
+          <p style={{ color: 'rgba(255,255,255,0.65)', marginBottom: '2.5rem', fontSize: '1rem' }}>Whether you're flying solo or bringing an entire team, NairobiJetHouse has the right aircraft at the right price. Our concierge team is standing by 24 hours a day, seven days a week.</p>
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link to="/book-flight" className="btn btn-gold btn-lg"><i className="bi bi-airplane" /> Book a Flight</Link>
             <Link to="/flight-inquiry" className="btn btn-outline-gold btn-lg" style={{ color: 'var(--white)', borderColor: 'rgba(255,255,255,0.3)' }}><i className="bi bi-send" /> Send an Inquiry</Link>

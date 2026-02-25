@@ -78,7 +78,7 @@ export default function Navbar() {
     <>
       <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
         <div className="navbar-inner">
-          <Link to="/" className="navbar-logo">Vista<span>Jets</span></Link>
+          <Link to="/" className="navbar-logo">Nairobi<span>JetHouse</span></Link>
 
           <ul className="navbar-links">
             {PRIMARY_LINKS.map(({ to, label, cta }) => (
@@ -189,7 +189,7 @@ export default function Navbar() {
 
       <aside className={`drawer${drawerOpen ? ' open' : ''}`} aria-modal="true" role="dialog">
         <div className="drawer-header">
-          <span className="drawer-logo">Vista<span>Jets</span></span>
+          <span className="drawer-logo">Nairobi<span>JetHouse</span></span>
           <button className="drawer-close" onClick={() => setDrawerOpen(false)} aria-label="Close menu">
             <i className="bi bi-x-lg" />
           </button>
@@ -223,7 +223,7 @@ export default function Navbar() {
           )}
           <div className="drawer-divider" />
           <a href="tel:+18005478538"><i className="bi bi-telephone" />+1 (800) 547-8538</a>
-          <a href="mailto:concierge@vistajets.com"><i className="bi bi-envelope" />concierge@vistajets.com</a>
+          <a href="mailto:concierge@NairobiJetHouse.com"><i className="bi bi-envelope" />concierge@NairobiJetHouse.com</a>
         </nav>
         <div className="drawer-footer">
           <p className="text-muted" style={{ fontSize: '0.78rem', marginBottom: '0.85rem' }}>No account required. Our team is available 24 / 7.</p>

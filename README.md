@@ -1,4 +1,4 @@
-# VistaJets — Private Aviation & Yacht Charter Platform
+# NairobiJetHouse — Private Aviation & Yacht Charter Platform
 
 A full-stack luxury travel platform for private jet bookings, yacht charters, and asset leasing. **No user accounts required** — guests can book, inquire, and track entirely without registering.
 
@@ -7,10 +7,10 @@ A full-stack luxury travel platform for private jet bookings, yacht charters, an
 ## Project Structure
 
 ```
-vistajets/
+NairobiJetHouse/
 ├── backend/                    # Django REST API
 │   ├── requirements.txt
-│   ├── vistajets/              # Django project
+│   ├── NairobiJetHouse/              # Django project
 │   │   ├── settings.py
 │   │   ├── urls.py
 │   │   └── wsgi.py
@@ -86,7 +86,7 @@ pip install -r requirements.txt
 
 # Set environment variables (create .env or export)
 export SECRET_KEY="your-secret-key"
-export DB_NAME="vistajets_db"
+export DB_NAME="NairobiJetHouse_db"
 export DB_USER="postgres"
 export DB_PASSWORD="yourpassword"
 
@@ -192,7 +192,7 @@ Yacht.objects.create(name='Ocean Rhapsody', size_category='superyacht', length_m
 
 ### Backend (Django)
 - Set `DEBUG=False` and proper `ALLOWED_HOSTS` in environment
-- Run with Gunicorn: `gunicorn vistajets.wsgi:application`
+- Run with Gunicorn: `gunicorn NairobiJetHouse.wsgi:application`
 - Use Nginx as reverse proxy
 - Configure proper CORS origins in settings
 
@@ -216,4 +216,4 @@ Yacht.objects.create(name='Ocean Rhapsody', size_category='superyacht', length_m
 
 ---
 
-*VistaJets — Elevating Every Journey*
+*NairobiJetHouse — Elevating Every Journey*

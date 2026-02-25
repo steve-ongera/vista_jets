@@ -52,8 +52,8 @@ export default function Contact() {
             <a href="tel:+18005478538" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--gold-light)', textDecoration: 'none', fontWeight: 600 }}>
               <i className="bi bi-telephone-fill" /> +1 (800) 547-8538
             </a>
-            <a href="mailto:concierge@vistajets.com" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}>
-              <i className="bi bi-envelope-fill" /> concierge@vistajets.com
+            <a href="mailto:concierge@NairobiJetHouse.com" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}>
+              <i className="bi bi-envelope-fill" /> concierge@NairobiJetHouse.com
             </a>
             <a href="#" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}>
               <i className="bi bi-whatsapp" /> WhatsApp
@@ -87,9 +87,9 @@ export default function Contact() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                 {[
                   { icon: 'bi-whatsapp', label: 'WhatsApp Business', val: '+1 (800) 547-8538', color: '#25D366' },
-                  { icon: 'bi-envelope', label: 'Email (General)', val: 'concierge@vistajets.com', color: 'var(--navy)' },
-                  { icon: 'bi-envelope', label: 'Media & Press', val: 'press@vistajets.com', color: 'var(--navy)' },
-                  { icon: 'bi-people', label: 'Careers', val: 'careers@vistajets.com', color: 'var(--navy)' },
+                  { icon: 'bi-envelope', label: 'Email (General)', val: 'concierge@NairobiJetHouse.com', color: 'var(--navy)' },
+                  { icon: 'bi-envelope', label: 'Media & Press', val: 'press@NairobiJetHouse.com', color: 'var(--navy)' },
+                  { icon: 'bi-people', label: 'Careers', val: 'careers@NairobiJetHouse.com', color: 'var(--navy)' },
                 ].map(({ icon, label, val, color }) => (
                   <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', padding: '0.9rem 1.1rem', background: 'var(--white)', border: '1px solid var(--gray-100)', borderRadius: 'var(--radius)' }}>
                     <i className={`bi ${icon}`} style={{ color, fontSize: '1rem', flexShrink: 0 }} />

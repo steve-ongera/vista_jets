@@ -632,7 +632,7 @@ export default function Fleet() {
           <span className="eyebrow"><i className="bi bi-grid-3x3-gap" /> Fleet Catalogue</span>
           <h1>Our <em style={{ color: 'var(--gold-light)' }}>Fleet</em></h1>
           <p style={{ marginTop: '0.75rem', maxWidth: 560 }}>
-            Every aircraft and yacht in the VistaJets network is independently certified 
+            Every aircraft and yacht in the NairobiJetHouse network is independently certified 
             and operated to the highest safety standards. Click <strong>Book</strong>, <strong>Charter</strong>, 
             or <strong>Lease</strong> on any listing to request in seconds — no page navigation required.
           </p>

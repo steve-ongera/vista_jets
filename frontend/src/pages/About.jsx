@@ -8,7 +8,7 @@ export default function About() {
   ]
 
   const MILESTONES = [
-    { year: '2004', event: 'VistaJets founded in Geneva with a fleet of 12 aircraft and a vision for frictionless private travel.' },
+    { year: '2004', event: 'NairobiJetHouse founded in Geneva with a fleet of 12 aircraft and a vision for frictionless private travel.' },
     { year: '2008', event: 'Expanded to Middle East and Asia Pacific, establishing regional hubs in Dubai and Singapore.' },
     { year: '2012', event: 'Launched our 24/7 concierge program and became the first private aviation company to offer guaranteed availability.' },
     { year: '2016', event: 'Added superyacht charter to our portfolio, creating the first integrated air & sea luxury travel platform.' },
@@ -32,7 +32,7 @@ export default function About() {
           <span className="eyebrow" style={{ color: 'var(--gold-light)' }}><i className="bi bi-building" /> Our Story</span>
           <h1 style={{ color: 'var(--white)', marginTop: '0.5rem', maxWidth: 680 }}>Two Decades of <em style={{ color: 'var(--gold-light)' }}>Defining</em> Private Aviation</h1>
           <p style={{ color: 'rgba(255,255,255,0.72)', maxWidth: 560, marginTop: '1.25rem', fontSize: '1.05rem', lineHeight: 1.8 }}>
-            Founded in Geneva in 2004, VistaJets was born from a simple conviction: private aviation should feel effortless, transparent, and truly global. Twenty years later, that conviction drives everything we do.
+            Founded in Geneva in 2004, NairobiJetHouse was born from a simple conviction: private aviation should feel effortless, transparent, and truly global. Twenty years later, that conviction drives everything we do.
           </p>
         </div>
       </section>

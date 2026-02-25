@@ -865,7 +865,7 @@ def _send_email_and_log(admin_user, to_email, to_name, subject, body,
     html_body = f"""
     <html><body style="font-family:Arial,sans-serif;max-width:600px;margin:auto;padding:20px">
       <div style="background:#0b1d3a;padding:20px;border-radius:8px 8px 0 0">
-        <h2 style="color:#C9A84C;margin:0">VJetaway</h2>
+        <h2 style="color:#C9A84C;margin:0">NairobiJetHouse</h2>
         <p style="color:rgba(255,255,255,0.6);margin:4px 0 0;font-size:13px">Private Aviation & Luxury Charter</p>
       </div>
       <div style="border:1px solid #e5e7eb;border-top:none;padding:28px;border-radius:0 0 8px 8px">
@@ -873,7 +873,7 @@ def _send_email_and_log(admin_user, to_email, to_name, subject, body,
         <div style="color:#374151;line-height:1.7;white-space:pre-line">{body}</div>
         <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0">
         <p style="color:#9ca3af;font-size:12px;margin:0">
-          VJetaway · Private Aviation & Luxury Charter<br>
+          NairobiJetHouse · Private Aviation & Luxury Charter<br>
           This email was sent by our operations team. Please do not reply directly to this message.
         </p>
       </div>
@@ -883,7 +883,7 @@ def _send_email_and_log(admin_user, to_email, to_name, subject, body,
         msg = EmailMultiAlternatives(
             subject=subject,
             body=body,
-            from_email=getattr(django_settings, 'DEFAULT_FROM_EMAIL', 'ops@vjetaway.com'),
+            from_email=getattr(django_settings, 'DEFAULT_FROM_EMAIL', 'ops@NairobiJetHouse.com'),
             to=[f'"{to_name}" <{to_email}>' if to_name else to_email],
         )
         msg.attach_alternative(html_body, "text/html")
@@ -1027,7 +1027,7 @@ class FlightBookingAdminViewSet(viewsets.ModelViewSet):
             route = f"{booking.origin.code} → {booking.destination.code}"
             body  = d.get('email_message') or (
                 f"Dear {booking.guest_name},\n\n"
-                f"Thank you for your flight enquiry with VJetaway.\n\n"
+                f"Thank you for your flight enquiry with NairobiJetHouse.\n\n"
                 f"We are pleased to provide your quote for the following flight:\n\n"
                 f"Route:       {route}\n"
                 f"Date:        {booking.departure_date}\n"
@@ -1035,11 +1035,11 @@ class FlightBookingAdminViewSet(viewsets.ModelViewSet):
                 f"Trip Type:   {booking.get_trip_type_display()}\n\n"
                 f"Quoted Price: USD ${d['quoted_price_usd']:,.2f}\n\n"
                 f"To confirm your booking, please reply to this email or contact your dedicated concierge.\n\n"
-                f"Warm regards,\nVJetaway Operations Team"
+                f"Warm regards,\nNairobiJetHouse Operations Team"
             )
             ok, err = _send_email_and_log(
                 request.user, booking.guest_email, booking.guest_name,
-                f"Your Flight Quote – {route} | VJetaway",
+                f"Your Flight Quote – {route} | NairobiJetHouse",
                 body, 'flight_booking', booking.id,
             )
             result['email_sent'] = ok
@@ -1113,7 +1113,7 @@ class YachtCharterAdminViewSet(viewsets.ModelViewSet):
             nights = (charter.charter_end - charter.charter_start).days
             body   = d.get('email_message') or (
                 f"Dear {charter.guest_name},\n\n"
-                f"Thank you for your yacht charter enquiry with VJetaway.\n\n"
+                f"Thank you for your yacht charter enquiry with NairobiJetHouse.\n\n"
                 f"Yacht:        {charter.yacht.name if charter.yacht else 'TBC'}\n"
                 f"Departure:    {charter.departure_port}\n"
                 f"Charter Start: {charter.charter_start}\n"
@@ -1122,11 +1122,11 @@ class YachtCharterAdminViewSet(viewsets.ModelViewSet):
                 f"Guests:       {charter.guest_count}\n\n"
                 f"Quoted Price: USD ${d['quoted_price_usd']:,.2f}\n\n"
                 f"Please contact us to proceed with your booking confirmation.\n\n"
-                f"Warm regards,\nVJetaway Concierge Team"
+                f"Warm regards,\nNairobiJetHouse Concierge Team"
             )
             ok, err = _send_email_and_log(
                 request.user, charter.guest_email, charter.guest_name,
-                f"Your Yacht Charter Quote | VJetaway",
+                f"Your Yacht Charter Quote | NairobiJetHouse",
                 body, 'yacht_charter', charter.id,
             )
             result['email_sent'] = ok
@@ -1340,12 +1340,12 @@ class MarketplaceBookingAdminViewSet(viewsets.ModelViewSet):
             f"Passengers:  {booking.passenger_count}\n"
             f"Total:       USD ${booking.gross_amount_usd:,.2f}\n\n"
             f"Your concierge will be in touch with further details.\n\n"
-            f"Warm regards,\nVJetaway Operations Team"
+            f"Warm regards,\nNairobiJetHouse Operations Team"
         )
         ok, err = _send_email_and_log(
             request.user, booking.client.email,
             booking.client.get_full_name(),
-            f"Booking Confirmed – {booking.origin} → {booking.destination} | VJetaway",
+            f"Booking Confirmed – {booking.origin} → {booking.destination} | NairobiJetHouse",
             body, 'marketplace_booking', booking.id,
         )
         if ok:

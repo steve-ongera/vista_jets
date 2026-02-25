@@ -16,8 +16,8 @@ from .models import (
     PaymentRecord, SavedRoute, Dispute,
 )
 
-admin.site.site_header = "✈  VistaJets Admin"
-admin.site.site_title  = "VistaJets"
+admin.site.site_header = "✈  NairobiJetHouse Admin"
+admin.site.site_title  = "NairobiJetHouse"
 admin.site.index_title = "Operations Dashboard"
 
 
@@ -658,12 +658,12 @@ class UserAdmin(BaseUserAdmin):
 
     # Extend base fieldsets with our custom fields
     fieldsets = BaseUserAdmin.fieldsets + (
-        ("VistaJets Profile", {
+        ("NairobiJetHouse Profile", {
             "fields": ("role", "phone", "company", "avatar_url"),
         }),
     )
     add_fieldsets = BaseUserAdmin.add_fieldsets + (
-        ("VistaJets Profile", {
+        ("NairobiJetHouse Profile", {
             "fields": ("role", "phone", "company"),
         }),
     )

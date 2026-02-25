@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="footer-grid">
           {/* Brand */}
           <div>
-            <span className="footer-logo">Vista<span>Jets</span></span>
+            <span className="footer-logo">Nairobi<span>JetHouse</span></span>
             <p>
               The world's leading private aviation and yacht charter platform. 
               Instant access to over 2,400 aircraft and 800 vessels in 187 countries — 
@@ -15,7 +15,7 @@ export default function Footer() {
             </p>
             <div style={{ marginTop: '1.5rem' }} className="footer-contact">
               <a href="tel:+18005478538"><i className="bi bi-telephone" /> +1 (800) 547-8538</a>
-              <a href="mailto:concierge@vistajets.com"><i className="bi bi-envelope" /> concierge@vistajets.com</a>
+              <a href="mailto:concierge@NairobiJetHouse.com"><i className="bi bi-envelope" /> concierge@NairobiJetHouse.com</a>
               <a href="#"><i className="bi bi-geo-alt" /> 1 World Trade Center, New York, NY</a>
             </div>
           </div>
@@ -55,7 +55,7 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <span>© {new Date().getFullYear()} VistaJets International Ltd. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} NairobiJetHouse International Ltd. All rights reserved.</span>
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
             <a href="#" style={{ color: 'rgba(255,255,255,0.35)', fontSize: '1.1rem' }}><i className="bi bi-linkedin" /></a>
             <a href="#" style={{ color: 'rgba(255,255,255,0.35)', fontSize: '1.1rem' }}><i className="bi bi-instagram" /></a>

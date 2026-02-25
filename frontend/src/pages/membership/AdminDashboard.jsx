@@ -539,7 +539,7 @@ function ReplyModal({ item, onClose, onSend, showPrice = false, showStatus = fal
         )}
         <div className="form-group" style={{marginBottom:'0.85rem'}}>
           <label className="form-label">Subject <span className="req">*</span></label>
-          <input className="form-control" required value={subject} onChange={e=>setSubject(e.target.value)} placeholder="e.g. Your flight quote from VJetaway" />
+          <input className="form-control" required value={subject} onChange={e=>setSubject(e.target.value)} placeholder="e.g. Your flight quote from NairobiJetHouse" />
         </div>
         <div className="form-group" style={{marginBottom:'0.85rem'}}>
           <label className="form-label">Message <span className="req">*</span></label>

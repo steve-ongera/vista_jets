@@ -146,7 +146,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:5173',
 ]
 # In production, replace with your actual domain:
-# CORS_ALLOWED_ORIGINS = ['https://vistajets.com']
+# CORS_ALLOWED_ORIGINS = ['https://NairobiJetHouse.com']
 
 CORS_ALLOW_CREDENTIALS = True
 

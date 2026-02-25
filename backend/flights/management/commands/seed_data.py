@@ -13,7 +13,7 @@ from flights.models import (
 
 
 class Command(BaseCommand):
-    help = 'Seed the database with initial data for Vista Jets'
+    help = 'Seed the database with initial data for Nairobi Jets'
 
     def add_arguments(self, parser):
         parser.add_argument(

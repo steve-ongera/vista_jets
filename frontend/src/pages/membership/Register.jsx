@@ -43,11 +43,11 @@ export default function Register() {
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <Link to="/" style={{ textDecoration: 'none' }}>
             <span style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', color: 'var(--navy)', fontWeight: 700 }}>
-              Vista<span style={{ color: 'var(--gold)' }}>Jets</span>
+              Nairobi<span style={{ color: 'var(--gold)' }}>Jets</span>
             </span>
           </Link>
           <h2 style={{ marginTop: '1rem', marginBottom: '0.25rem', color: 'var(--navy)' }}>Create Your Account</h2>
-          <p style={{ color: 'var(--gray-500)', fontSize: '0.875rem' }}>Join the VistaJets private aviation network.</p>
+          <p style={{ color: 'var(--gray-500)', fontSize: '0.875rem' }}>Join the NairobiJetHouse private aviation network.</p>
         </div>
 
         <div style={{ background: 'var(--white)', border: '1px solid var(--gray-100)', borderRadius: 'var(--radius-xl)', padding: '2rem', boxShadow: 'var(--shadow-lg)' }}>
@@ -158,7 +158,7 @@ export default function Register() {
 
         <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.8rem', color: 'var(--gray-400)' }}>
           <Link to="/" style={{ color: 'var(--gray-400)', textDecoration: 'none' }}>
-            <i className="bi bi-arrow-left" /> Back to VistaJets
+            <i className="bi bi-arrow-left" /> Back to NairobiJetHouse
           </Link>
         </p>
       </div>

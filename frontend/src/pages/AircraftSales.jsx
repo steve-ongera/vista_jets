@@ -128,7 +128,7 @@ export default function AircraftSales() {
         </div>
       </section>
 
-      {/* ── Why VistaJets Sales ──────────────────────────────────────────────── */}
+      {/* ── Why NairobiJetHouse Sales ──────────────────────────────────────────────── */}
       <section className="section" style={{ background: 'var(--off-white)' }}>
         <div className="container">
           <div className="grid-4">

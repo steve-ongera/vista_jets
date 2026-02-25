@@ -36,7 +36,7 @@ export default function Login() {
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <Link to="/" style={{ textDecoration: 'none' }}>
             <span style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', color: 'var(--navy)', fontWeight: 700 }}>
-              Vista<span style={{ color: 'var(--gold)' }}>Jets</span>
+              Nairobi<span style={{ color: 'var(--gold)' }}>Jets</span>
             </span>
           </Link>
           <h2 style={{ marginTop: '1rem', marginBottom: '0.25rem', color: 'var(--navy)' }}>Member Sign In</h2>
@@ -107,7 +107,7 @@ export default function Login() {
         {/* Back to site */}
         <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.8rem', color: 'var(--gray-400)' }}>
           <Link to="/" style={{ color: 'var(--gray-400)', textDecoration: 'none' }}>
-            <i className="bi bi-arrow-left" /> Back to VistaJets
+            <i className="bi bi-arrow-left" /> Back to NairobiJetHouse
           </Link>
         </p>
       </div>
