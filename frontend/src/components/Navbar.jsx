@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { clearTokens } from '../services/api'
 
 const PRIMARY_LINKS = [
-  { to: '/book-flight',    label: 'Book a Flight',  icon: 'bi-airplane',    cta: true },
+  { to: '/book-flight',    label: 'Private Jet Charter',  icon: 'bi-airplane',    cta: true },
   { to: '/fleet',          label: 'Our Fleet',      icon: 'bi-grid-3x3-gap' },
   { to: '/yacht-charter',  label: 'Yacht Charter',  icon: 'bi-water' },
   { to: '/flight-inquiry', label: 'Flight Inquiry', icon: 'bi-send' },
@@ -227,7 +227,7 @@ export default function Navbar() {
         </nav>
         <div className="drawer-footer">
           <p className="text-muted" style={{ fontSize: '0.78rem', marginBottom: '0.85rem' }}>No account required. Our team is available 24 / 7.</p>
-          <Link to="/book-flight" className="btn btn-navy btn-lg drawer-footer-book"><i className="bi bi-airplane" /> Book a Flight</Link>
+          <Link to="/book-flight" className="btn btn-navy btn-lg drawer-footer-book"><i className="bi bi-airplane" /> Private Charter</Link>
         </div>
       </aside>
     </>
