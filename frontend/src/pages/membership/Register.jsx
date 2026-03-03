@@ -106,7 +106,7 @@ export default function Register() {
               <div className="form-group">
                 <label className="form-label">Phone</label>
                 <input className="form-control" value={form.phone}
-                  onChange={e => set('phone', e.target.value)} placeholder="+1 555 000 0000" />
+                  onChange={e => set('phone', e.target.value)} placeholder="+254 700 000 000" />
               </div>
               <div className="form-group">
                 <label className="form-label">Company</label>

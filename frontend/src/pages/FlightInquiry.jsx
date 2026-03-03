@@ -102,7 +102,7 @@ export default function FlightInquiry() {
                   </div>
                   <div className="form-group">
                     <label className="form-label">Phone Number</label>
-                    <input className="form-control" value={form.guest_phone} onChange={e => set('guest_phone', e.target.value)} placeholder="+1 555 000 0000" />
+                    <input className="form-control" value={form.guest_phone} onChange={e => set('guest_phone', e.target.value)} placeholder="+254 700 000 000" />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Number of Passengers</label>
