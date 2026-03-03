@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import {
   getAircraft, getYachts,
   createFlightBooking, createYachtCharter, createLeaseInquiry,
@@ -42,6 +42,113 @@ const LEASE_DURATIONS = [
   { value: 'annual',    label: 'Annual (12 months)' },
   { value: 'multi_year', label: 'Multi-Year' },
 ]
+
+/* ─── Hero Video Background ──────────────────────────────────────────────────── */
+const HERO_VIDEOS = [
+  '/video-one.mp4',
+  '/video-two.mp4',
+  '/video-three.mp4',
+  '/video-four.mp4',
+  '/video-five.mp4',
+  '/video-six.mp4',
+  '/video-seven.mp4',
+]
+
+function HeroVideoBackground() {
+  const [current, setCurrent] = useState(0)
+  const [next, setNext]       = useState(null)
+  const [fading, setFading]   = useState(false)
+  const currentRef            = useRef(null)
+  const nextRef               = useRef(null)
+  const timerRef              = useRef(null)
+
+  // Advance to the next video
+  const advance = useCallback(() => {
+    const nextIdx = (current + 1) % HERO_VIDEOS.length
+    setNext(nextIdx)
+    setFading(true)
+  }, [current])
+
+  // When the "next" video is ready and fading starts, swap after transition
+  useEffect(() => {
+    if (!fading || next === null) return
+    const t = setTimeout(() => {
+      setCurrent(next)
+      setNext(null)
+      setFading(false)
+    }, 1000) // matches the CSS transition duration
+    return () => clearTimeout(t)
+  }, [fading, next])
+
+  // Auto-advance every 6 seconds
+  useEffect(() => {
+    timerRef.current = setTimeout(advance, 6000)
+    return () => clearTimeout(timerRef.current)
+  }, [current, advance])
+
+  // Ensure current video plays when it becomes active
+  useEffect(() => {
+    if (currentRef.current) {
+      currentRef.current.play().catch(() => {})
+    }
+  }, [current])
+
+  // Start playing the next video as soon as it mounts so the crossfade is seamless
+  useEffect(() => {
+    if (nextRef.current) {
+      nextRef.current.play().catch(() => {})
+    }
+  }, [next])
+
+  const videoStyle = {
+    position: 'absolute',
+    inset: 0,
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    objectPosition: 'center',
+  }
+
+  return (
+    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', zIndex: 0 }}>
+      {/* Current video */}
+      <video
+        key={`current-${current}`}
+        ref={currentRef}
+        src={HERO_VIDEOS[current]}
+        style={{
+          ...videoStyle,
+          opacity: fading ? 0 : 1,
+          transition: 'opacity 1s ease-in-out',
+          zIndex: 1,
+        }}
+        muted
+        playsInline
+        loop
+        autoPlay
+      />
+
+      {/* Next video (pre-loading underneath, fades in) */}
+      {next !== null && (
+        <video
+          key={`next-${next}`}
+          ref={nextRef}
+          src={HERO_VIDEOS[next]}
+          style={{
+            ...videoStyle,
+            opacity: fading ? 1 : 0,
+            transition: 'opacity 1s ease-in-out',
+            zIndex: 2,
+          }}
+          muted
+          playsInline
+          loop
+          autoPlay
+        />
+      )}
+    </div>
+  )
+}
 
 /* ─── Inline Airport Picker ──────────────────────────────────────────────────── */
 function AirportPicker({ label, value, onChange, required }) {
@@ -589,7 +696,7 @@ export default function Home() {
     <div>
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <section className="hero">
-        <div className="hero-bg" style={{ backgroundImage: `url(https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=1600&q=80)` }} />
+        <HeroVideoBackground />
         <div className="hero-overlay" />
         <div className="container" style={{ width: '100%' }}>
           <div className="hero-content fade-up">
