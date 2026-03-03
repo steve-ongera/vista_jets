@@ -14,9 +14,9 @@ export default function Footer() {
               with no membership, no subscription, and no waiting.
             </p>
             <div style={{ marginTop: '1.5rem' }} className="footer-contact">
-              <a href="tel:+18005478538"><i className="bi bi-telephone" /> +1 (800) 547-8538</a>
-              <a href="mailto:concierge@NairobiJetHouse.com"><i className="bi bi-envelope" /> concierge@NairobiJetHouse.com</a>
-              <a href="#"><i className="bi bi-geo-alt" /> 1 World Trade Center, New York, NY</a>
+              <a href="tel:+18005478538"><i className="bi bi-telephone" /> +254 724 878 136</a>
+              <a href="mailto:nairobijethouse@gmail.com"><i className="bi bi-envelope" /> nairobijethouse@gmail.com</a>
+              <a href="#"><i className="bi bi-geo-alt" /> Wilson Airport, Lang'ata Road, Nairobi, Kenya</a>
             </div>
           </div>
 
@@ -55,7 +55,7 @@ export default function Footer() {
         </div>
 
         <div className="footer-bottom">
-          <span>© {new Date().getFullYear()} NairobiJetHouse International Ltd. All rights reserved.</span>
+          <span>© {new Date().getFullYear()} Nairobi Jet House. All rights reserved.</span>
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
             <a href="#" style={{ color: 'rgba(255,255,255,0.35)', fontSize: '1.1rem' }}><i className="bi bi-linkedin" /></a>
             <a href="#" style={{ color: 'rgba(255,255,255,0.35)', fontSize: '1.1rem' }}><i className="bi bi-instagram" /></a>

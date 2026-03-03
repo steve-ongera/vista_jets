@@ -701,9 +701,9 @@ export default function Home() {
         <div className="container" style={{ width: '100%' }}>
           <div className="hero-content fade-up">
             <span className="eyebrow" style={{ color: 'var(--gold-light)' }}>
-              <i className="bi bi-airplane" /> Private jet charters & Yacht Charter
+              <i className="bi bi-airplane" /> Travel across hidden lands
             </span>
-            <h1>The World Is Your<br /><em>Runway</em></h1>
+            <h1> Private Jet Charters &<br /><em> Yacht Charter</em></h1>
             <p>Instant access to 2,400+ private aircraft and 800+ yachts in 187 countries. No membership. No waiting. Just seamless luxury travel tailored to you.</p>
             <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
               <Link to="/book-flight" className="btn btn-gold btn-lg fade-up delay-1"><i className="bi bi-airplane" /> Book a Flight</Link>

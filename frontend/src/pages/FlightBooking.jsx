@@ -261,7 +261,7 @@ export default function FlightBooking() {
                 <h4 style={{ color: 'var(--white)', fontSize: '0.95rem', marginBottom: '0.5rem' }}>Prefer to Talk?</h4>
                 <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.82rem', marginBottom: '1rem' }}>Our concierge team is available 24 / 7 by phone.</p>
                 <a href="tel:+18005478538" className="btn btn-gold btn-sm" style={{ width: '100%', justifyContent: 'center' }}>
-                  <i className="bi bi-telephone" /> +1 (800) 547-8538
+                  <i className="bi bi-telephone" /> +254 724 878 136
                 </a>
               </div>
             </div>

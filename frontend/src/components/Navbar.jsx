@@ -222,8 +222,8 @@ export default function Navbar() {
             </>
           )}
           <div className="drawer-divider" />
-          <a href="tel:+18005478538"><i className="bi bi-telephone" />+1 (800) 547-8538</a>
-          <a href="mailto:concierge@NairobiJetHouse.com"><i className="bi bi-envelope" />concierge@NairobiJetHouse.com</a>
+          <a href="tel:+18005478538"><i className="bi bi-telephone" />+254 724 878 136</a>
+          <a href="mailto:nairobijethouse@gmail.com"><i className="bi bi-envelope" />nairobijethouse@gmail.com</a>
         </nav>
         <div className="drawer-footer">
           <p className="text-muted" style={{ fontSize: '0.78rem', marginBottom: '0.85rem' }}>No account required. Our team is available 24 / 7.</p>

@@ -50,10 +50,10 @@ export default function Contact() {
           </p>
           <div style={{ display: 'flex', gap: '1.5rem', marginTop: '2rem', flexWrap: 'wrap' }}>
             <a href="tel:+18005478538" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--gold-light)', textDecoration: 'none', fontWeight: 600 }}>
-              <i className="bi bi-telephone-fill" /> +1 (800) 547-8538
+              <i className="bi bi-telephone-fill" /> +254 724 878 136
             </a>
-            <a href="mailto:concierge@NairobiJetHouse.com" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}>
-              <i className="bi bi-envelope-fill" /> concierge@NairobiJetHouse.com
+            <a href="mailto:nairobijethouse@gmail.com" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}>
+              <i className="bi bi-envelope-fill" /> nairobijethouse@gmail.com
             </a>
             <a href="#" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}>
               <i className="bi bi-whatsapp" /> WhatsApp
@@ -86,8 +86,8 @@ export default function Contact() {
               <h3 style={{ marginBottom: '1.25rem' }}>Other Channels</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                 {[
-                  { icon: 'bi-whatsapp', label: 'WhatsApp Business', val: '+1 (800) 547-8538', color: '#25D366' },
-                  { icon: 'bi-envelope', label: 'Email (General)', val: 'concierge@NairobiJetHouse.com', color: 'var(--navy)' },
+                  { icon: 'bi-whatsapp', label: 'WhatsApp Business', val: '+254 724 878 136', color: '#25D366' },
+                  { icon: 'bi-envelope', label: 'Email (General)', val: 'nairobijethouse@gmail.com', color: 'var(--navy)' },
                   { icon: 'bi-envelope', label: 'Media & Press', val: 'press@NairobiJetHouse.com', color: 'var(--navy)' },
                   { icon: 'bi-people', label: 'Careers', val: 'careers@NairobiJetHouse.com', color: 'var(--navy)' },
                 ].map(({ icon, label, val, color }) => (

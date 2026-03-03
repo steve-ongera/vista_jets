@@ -12,7 +12,7 @@ const CATEGORIES = [
 ]
 
 const FAQ = [
-  { q: 'How quickly will I receive a response?', a: 'Our aviation specialists respond to all inquiries within 2–4 hours during business hours, and within 6 hours outside business hours. For urgent trips, call us directly on +1 (800) 547-8538.' },
+  { q: 'How quickly will I receive a response?', a: 'Our aviation specialists respond to all inquiries within 2–4 hours during business hours, and within 6 hours outside business hours. For urgent trips, call us directly on +254 724 878 136.' },
   { q: 'Is there any cost to submitting an inquiry?', a: 'Absolutely not. Submitting a flight inquiry is completely free and carries no obligation. Our team will present options and pricing for your consideration — you decide whether to proceed.' },
   { q: "What if I don't know my exact dates?", a: "That's exactly what a flight inquiry is for. Give us your approximate timeframe — 'late July', 'sometime in Q3', 'flexible' — and we'll present availability options across your preferred window." },
   { q: 'How does a flight inquiry differ from a booking?', a: 'A flight inquiry is exploratory — ideal when you want to understand pricing, aircraft options, or route feasibility before committing. A booking is for when you know exactly where you want to go and when.' },
@@ -207,7 +207,7 @@ export default function FlightInquiry() {
                 <div style={{ fontWeight: 600, color: 'var(--navy)', marginBottom: '0.25rem' }}>Prefer to Talk?</div>
                 <p style={{ fontSize: '0.8rem', marginBottom: '1rem' }}>Speak directly with an aviation specialist, 24 / 7.</p>
                 <a href="tel:+18005478538" className="btn btn-navy btn-sm" style={{ width: '100%', justifyContent: 'center' }}>
-                  +1 (800) 547-8538
+                  +254 724 878 136
                 </a>
               </div>
             </div>
