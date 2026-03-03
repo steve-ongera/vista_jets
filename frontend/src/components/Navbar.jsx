@@ -35,14 +35,21 @@ const ALL_SERVICE_LINKS = [
   { to: '/leasing',        label: 'Leasing',        icon: 'bi-file-earmark-text' },
 ]
 
+/* ── Hover style helper — underline + bold on hover ─────────────────────────── */
+const linkHoverStyle = {
+  base: { textDecoration: 'none', fontWeight: 500, transition: 'var(--transition)' },
+  on:   { textDecoration: 'underline', textUnderlineOffset: '3px', fontWeight: 700 },
+  off:  { textDecoration: 'none', fontWeight: 500 },
+}
+
 export default function Navbar() {
-  const [scrolled, setScrolled]     = useState(false)
-  const [drawerOpen, setDrawerOpen] = useState(false)
-  const [moreOpen, setMoreOpen]     = useState(false)
+  const [scrolled, setScrolled]         = useState(false)
+  const [drawerOpen, setDrawerOpen]     = useState(false)
+  const [moreOpen, setMoreOpen]         = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
-  const [user, setUser]             = useState(null)
-  const location                    = useLocation()
-  const navigate                    = useNavigate()
+  const [user, setUser]                 = useState(null)
+  const location                        = useLocation()
+  const navigate                        = useNavigate()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -52,7 +59,6 @@ export default function Navbar() {
 
   useEffect(() => {
     setDrawerOpen(false); setMoreOpen(false); setUserMenuOpen(false)
-    // Read user from localStorage on route change
     const stored = localStorage.getItem('vj_user')
     setUser(stored ? JSON.parse(stored) : null)
   }, [location])
@@ -78,12 +84,26 @@ export default function Navbar() {
     <>
       <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
         <div className="navbar-inner">
-          <Link to="/" className="navbar-logo">Nairobi<span>JetHouse</span></Link>
+
+          {/* ── Logo — image + text ────────────────────────────────────────── */}
+          <Link to="/" className="navbar-logo" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <img
+              src="/nairobi_jet_house_logo.png"
+              alt="NairobiJetHouse logo"
+              style={{ height: 36, width: 'auto', objectFit: 'contain' }}
+            />
+            Nairobi<span>JetHouse</span>
+          </Link>
 
           <ul className="navbar-links">
             {PRIMARY_LINKS.map(({ to, label, cta }) => (
               <li key={to}>
-                <Link to={to} className={[isActive(to) ? 'active' : '', cta ? 'navbar-cta-btn' : ''].join(' ').trim()}>
+                <Link
+                  to={to}
+                  className={[isActive(to) ? 'active' : '', cta ? 'navbar-cta-btn' : ''].join(' ').trim()}
+                  onMouseEnter={e => { if (!cta) { e.currentTarget.style.textDecoration = 'underline'; e.currentTarget.style.textUnderlineOffset = '3px'; e.currentTarget.style.fontWeight = '700' } }}
+                  onMouseLeave={e => { if (!cta) { e.currentTarget.style.textDecoration = 'none'; e.currentTarget.style.fontWeight = isActive(to) ? '700' : '500' } }}
+                >
                   {label}
                 </Link>
               </li>
@@ -91,7 +111,10 @@ export default function Navbar() {
 
             {/* Services dropdown */}
             <li style={{ position: 'relative' }}>
-              <button onClick={() => setMoreOpen(o => !o)}
+              <button
+                onClick={() => setMoreOpen(o => !o)}
+                onMouseEnter={e => { e.currentTarget.style.textDecoration = 'underline'; e.currentTarget.style.textUnderlineOffset = '3px'; e.currentTarget.style.fontWeight = '700' }}
+                onMouseLeave={e => { e.currentTarget.style.textDecoration = 'none'; e.currentTarget.style.fontWeight = '500' }}
                 style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: 'inherit', fontFamily: 'inherit', fontWeight: 500, color: moreOpen ? 'var(--gold)' : 'inherit', padding: '0.25rem 0', transition: 'var(--transition)' }}>
                 Services&nbsp;<i className={`bi bi-chevron-${moreOpen ? 'up' : 'down'}`} style={{ fontSize: '0.68rem' }} />
               </button>
@@ -115,10 +138,16 @@ export default function Navbar() {
                       </Link>
                     ))}
                     <div style={{ padding: '0.65rem 1.1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <Link to="/about" style={{ fontSize: '0.78rem', color: 'var(--navy)', fontWeight: 500, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <Link to="/about"
+                        style={{ fontSize: '0.78rem', color: 'var(--navy)', fontWeight: 500, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+                        onMouseEnter={e => { e.currentTarget.style.textDecoration = 'underline'; e.currentTarget.style.textUnderlineOffset = '3px'; e.currentTarget.style.fontWeight = '700' }}
+                        onMouseLeave={e => { e.currentTarget.style.textDecoration = 'none'; e.currentTarget.style.fontWeight = '500' }}>
                         <i className="bi bi-building" style={{ color: 'var(--gold)', fontSize: '0.8rem' }} /> About Us
                       </Link>
-                      <Link to="/track" style={{ fontSize: '0.78rem', color: 'var(--navy)', fontWeight: 500, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <Link to="/track"
+                        style={{ fontSize: '0.78rem', color: 'var(--navy)', fontWeight: 500, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+                        onMouseEnter={e => { e.currentTarget.style.textDecoration = 'underline'; e.currentTarget.style.textUnderlineOffset = '3px'; e.currentTarget.style.fontWeight = '700' }}
+                        onMouseLeave={e => { e.currentTarget.style.textDecoration = 'none'; e.currentTarget.style.fontWeight = '500' }}>
                         <i className="bi bi-search" style={{ color: 'var(--gold)', fontSize: '0.8rem' }} /> Track Booking
                       </Link>
                     </div>
@@ -147,14 +176,14 @@ export default function Navbar() {
                           <span style={{ fontSize: '0.65rem', fontWeight: 700, background: 'var(--gold-pale)', color: 'var(--gold)', padding: '1px 8px', borderRadius: 10, marginTop: '0.3rem', display: 'inline-block', textTransform: 'uppercase' }}>{user.role}</span>
                         </div>
                         {[
-                          { to: dashboardPath,         icon: 'bi-speedometer2', label: 'Dashboard' },
-                          { to: '/membership/bookings',icon: 'bi-calendar3',    label: 'My Bookings' },
-                          { to: '/membership/plans',   icon: 'bi-shield-check', label: 'Membership' },
+                          { to: dashboardPath,          icon: 'bi-speedometer2', label: 'Dashboard' },
+                          { to: '/membership/bookings', icon: 'bi-calendar3',    label: 'My Bookings' },
+                          { to: '/membership/plans',    icon: 'bi-shield-check', label: 'Membership' },
                         ].map(({ to, icon, label }) => (
                           <Link key={to} to={to}
                             style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', padding: '0.6rem 1rem', textDecoration: 'none', fontSize: '0.85rem', color: 'var(--gray-700)', borderBottom: '1px solid var(--gray-100)', transition: 'background 0.15s' }}
-                            onMouseEnter={e => e.currentTarget.style.background = 'var(--gray-50)'}
-                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                            onMouseEnter={e => { e.currentTarget.style.background = 'var(--gray-50)'; e.currentTarget.style.fontWeight = '700' }}
+                            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.fontWeight = '500' }}>
                             <i className={`bi ${icon}`} style={{ color: 'var(--gold)' }} />{label}
                           </Link>
                         ))}
@@ -189,7 +218,14 @@ export default function Navbar() {
 
       <aside className={`drawer${drawerOpen ? ' open' : ''}`} aria-modal="true" role="dialog">
         <div className="drawer-header">
-          <span className="drawer-logo">Nairobi<span>JetHouse</span></span>
+          <span className="drawer-logo" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <img
+              src="/nairobi_jet_house_logo.png"
+              alt="NairobiJetHouse logo"
+              style={{ height: 30, width: 'auto', objectFit: 'contain' }}
+            />
+            Nairobi<span>JetHouse</span>
+          </span>
           <button className="drawer-close" onClick={() => setDrawerOpen(false)} aria-label="Close menu">
             <i className="bi bi-x-lg" />
           </button>
@@ -204,7 +240,6 @@ export default function Navbar() {
             <Link key={to} to={to} className={isActive(to) ? 'active' : ''}><i className={`bi ${icon}`} />{label}</Link>
           ))}
           <div className="drawer-divider" />
-          {/* Membership in drawer */}
           {user ? (
             <>
               <Link to={dashboardPath}><i className="bi bi-speedometer2" />Dashboard</Link>
@@ -222,7 +257,7 @@ export default function Navbar() {
             </>
           )}
           <div className="drawer-divider" />
-          <a href="tel:+18005478538"><i className="bi bi-telephone" />+254 724 878 136</a>
+          <a href="tel:+254724878136"><i className="bi bi-telephone" />+254 724 878 136</a>
           <a href="mailto:nairobijethouse@gmail.com"><i className="bi bi-envelope" />nairobijethouse@gmail.com</a>
         </nav>
         <div className="drawer-footer">
