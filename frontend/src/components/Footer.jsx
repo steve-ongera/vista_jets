@@ -57,9 +57,9 @@ export default function Footer() {
         <div className="footer-bottom">
           <span>© {new Date().getFullYear()} Nairobi Jet House. All rights reserved.</span>
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-            <a href="#" style={{ color: 'rgba(255,255,255,0.35)', fontSize: '1.1rem' }}><i className="bi bi-linkedin" /></a>
-            <a href="#" style={{ color: 'rgba(255,255,255,0.35)', fontSize: '1.1rem' }}><i className="bi bi-instagram" /></a>
-            <a href="#" style={{ color: 'rgba(255,255,255,0.35)', fontSize: '1.1rem' }}><i className="bi bi-twitter-x" /></a>
+            <a href="https://www.linkedin.com/company/nairobijethouse/" style={{ color: 'rgba(255,255,255,0.35)', fontSize: '1.1rem' }}><i className="bi bi-linkedin" /></a>
+            <a href="https://www.instagram.com/nairobijethouse/" style={{ color: 'rgba(255,255,255,0.35)', fontSize: '1.1rem' }}><i className="bi bi-instagram" /></a>
+            <a href="https://x.com/nairobijethouse" style={{ color: 'rgba(255,255,255,0.35)', fontSize: '1.1rem' }}><i className="bi bi-twitter-x" /></a>
           </div>
         </div>
       </div>
