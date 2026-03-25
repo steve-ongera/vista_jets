@@ -4,11 +4,12 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { clearTokens } from '../services/api'
 
 const PRIMARY_LINKS = [
-  { to: '/book-flight',    label: 'Private Jet Charter',  icon: 'bi-airplane',    cta: true },
-  { to: '/fleet',          label: 'Our Fleet',      icon: 'bi-grid-3x3-gap' },
-  { to: '/yacht-charter',  label: 'Yacht Charter',  icon: 'bi-water' },
-  { to: '/flight-inquiry', label: 'Flight Inquiry', icon: 'bi-send' },
-  { to: '/contact',        label: 'Contact Us',     icon: 'bi-envelope' },
+  { to: '/',               label: 'Home',             icon: 'bi-house',       },
+  { to: '/book-flight',    label: 'Private Jet Charter', icon: 'bi-airplane', cta: true },
+  { to: '/fleet',          label: 'Our Fleet',        icon: 'bi-grid-3x3-gap' },
+  { to: '/yacht-charter',  label: 'Yacht Charter',    icon: 'bi-water' },
+  { to: '/flight-inquiry', label: 'Flight Inquiry',   icon: 'bi-send' },
+  { to: '/contact',        label: 'Contact Us',       icon: 'bi-envelope' },
 ]
 
 const SERVICE_LINKS = [
@@ -19,6 +20,7 @@ const SERVICE_LINKS = [
 ]
 
 const ALL_LINKS = [
+  { to: '/',               label: 'Home',           icon: 'bi-house' },
   { to: '/book-flight',    label: 'Book a Flight',  icon: 'bi-airplane' },
   { to: '/fleet',          label: 'Our Fleet',      icon: 'bi-grid-3x3-gap' },
   { to: '/flight-inquiry', label: 'Flight Inquiry', icon: 'bi-send' },
@@ -34,13 +36,6 @@ const ALL_SERVICE_LINKS = [
   { to: '/aircraft-sales', label: 'Aircraft Sales', icon: 'bi-tag' },
   { to: '/leasing',        label: 'Leasing',        icon: 'bi-file-earmark-text' },
 ]
-
-/* ── Hover style helper — underline + bold on hover ─────────────────────────── */
-const linkHoverStyle = {
-  base: { textDecoration: 'none', fontWeight: 500, transition: 'var(--transition)' },
-  on:   { textDecoration: 'underline', textUnderlineOffset: '3px', fontWeight: 700 },
-  off:  { textDecoration: 'none', fontWeight: 500 },
-}
 
 export default function Navbar() {
   const [scrolled, setScrolled]         = useState(false)
@@ -68,7 +63,7 @@ export default function Navbar() {
     return () => { document.body.style.overflow = '' }
   }, [drawerOpen])
 
-  const isActive = (to) => location.pathname === to
+  const isActive = (to) => to === '/' ? location.pathname === '/' : location.pathname === to
 
   const handleLogout = () => {
     clearTokens()
@@ -83,10 +78,10 @@ export default function Navbar() {
   return (
     <>
       <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
-        <div className="navbar-inner">
+        <div className="navbar-inner" style={{ gap: '0.5rem' }}>
 
-          {/* ── Logo — image + text ────────────────────────────────────────── */}
-          <Link to="/" className="navbar-logo" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          {/* ── Logo ─────────────────────────────────────────────────────────── */}
+          <Link to="/" className="navbar-logo" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexShrink: 0 }}>
             <img
               src="/nairobi_jet_house_logo.png"
               alt="NairobiJetHouse logo"
@@ -95,12 +90,14 @@ export default function Navbar() {
             Nairobi<span>JetHouse</span>
           </Link>
 
-          <ul className="navbar-links">
+          {/* ── Desktop Links ────────────────────────────────────────────────── */}
+          <ul className="navbar-links" style={{ gap: '0.1rem' }}>
             {PRIMARY_LINKS.map(({ to, label, cta }) => (
               <li key={to}>
                 <Link
                   to={to}
                   className={[isActive(to) ? 'active' : '', cta ? 'navbar-cta-btn' : ''].join(' ').trim()}
+                  style={{ fontSize: '0.8rem', padding: cta ? undefined : '0.42rem 0.72rem' }}
                   onMouseEnter={e => { if (!cta) { e.currentTarget.style.textDecoration = 'underline'; e.currentTarget.style.textUnderlineOffset = '3px'; e.currentTarget.style.fontWeight = '700' } }}
                   onMouseLeave={e => { if (!cta) { e.currentTarget.style.textDecoration = 'none'; e.currentTarget.style.fontWeight = isActive(to) ? '700' : '500' } }}
                 >
@@ -115,8 +112,8 @@ export default function Navbar() {
                 onClick={() => setMoreOpen(o => !o)}
                 onMouseEnter={e => { e.currentTarget.style.textDecoration = 'underline'; e.currentTarget.style.textUnderlineOffset = '3px'; e.currentTarget.style.fontWeight = '700' }}
                 onMouseLeave={e => { e.currentTarget.style.textDecoration = 'none'; e.currentTarget.style.fontWeight = '500' }}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: 'inherit', fontFamily: 'inherit', fontWeight: 500, color: moreOpen ? 'var(--gold)' : 'inherit', padding: '0.25rem 0', transition: 'var(--transition)' }}>
-                Services&nbsp;<i className={`bi bi-chevron-${moreOpen ? 'up' : 'down'}`} style={{ fontSize: '0.68rem' }} />
+                style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.8rem', fontFamily: 'inherit', fontWeight: 500, color: moreOpen ? 'var(--gold)' : 'inherit', padding: '0.42rem 0.72rem', transition: 'var(--transition)', borderRadius: 'var(--radius)' }}>
+                Services&nbsp;<i className={`bi bi-chevron-${moreOpen ? 'up' : 'down'}`} style={{ fontSize: '0.65rem' }} />
               </button>
               {moreOpen && (
                 <>
@@ -157,11 +154,11 @@ export default function Navbar() {
             </li>
 
             {/* ── Membership / User ── */}
-            <li style={{ position: 'relative' }}>
+            <li style={{ position: 'relative', marginLeft: '0.25rem' }}>
               {user ? (
                 <>
                   <button onClick={() => setUserMenuOpen(o => !o)}
-                    style={{ background: 'none', border: '1.5px solid var(--gray-200)', borderRadius: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.25rem 0.7rem', fontFamily: 'inherit', fontSize: '0.82rem', fontWeight: 600, color: 'var(--navy)', transition: 'var(--transition)' }}>
+                    style={{ background: 'none', border: '1.5px solid var(--gray-200)', borderRadius: 20, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', padding: '0.25rem 0.7rem', fontFamily: 'inherit', fontSize: '0.8rem', fontWeight: 600, color: 'var(--navy)', transition: 'var(--transition)' }}>
                     <i className="bi bi-person-circle" style={{ fontSize: '1rem' }} />
                     {user.first_name || user.username}
                     <i className={`bi bi-chevron-${userMenuOpen ? 'up' : 'down'}`} style={{ fontSize: '0.65rem' }} />
@@ -199,7 +196,7 @@ export default function Navbar() {
                 </>
               ) : (
                 <Link to="/membership/login"
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.3rem 0.85rem', border: '1.5px solid var(--navy)', borderRadius: 20, fontSize: '0.82rem', fontWeight: 600, color: 'var(--navy)', textDecoration: 'none', transition: 'var(--transition)' }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', padding: '0.3rem 0.85rem', border: '1.5px solid var(--navy)', borderRadius: 20, fontSize: '0.8rem', fontWeight: 600, color: 'var(--navy)', textDecoration: 'none', transition: 'var(--transition)' }}
                   onMouseEnter={e => { e.currentTarget.style.background = 'var(--navy)'; e.currentTarget.style.color = 'white' }}
                   onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--navy)' }}>
                   <i className="bi bi-person" /> Member Login
@@ -214,6 +211,7 @@ export default function Navbar() {
         </div>
       </nav>
 
+      {/* ── Drawer (mobile) — unchanged ──────────────────────────────────────── */}
       <div className={`drawer-overlay${drawerOpen ? ' open' : ''}`} onClick={() => setDrawerOpen(false)} />
 
       <aside className={`drawer${drawerOpen ? ' open' : ''}`} aria-modal="true" role="dialog">
