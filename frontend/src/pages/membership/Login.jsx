@@ -4,10 +4,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import { loginUser, saveTokens } from '../../services/api'
 
 export default function Login() {
-  const [form, setForm]       = useState({ username: '', password: '' })
-  const [loading, setLoading] = useState(false)
-  const [error, setError]     = useState(null)
-  const navigate              = useNavigate()
+  const [form, setForm]         = useState({ username: '', password: '' })
+  const [loading, setLoading]   = useState(false)
+  const [error, setError]       = useState(null)
+  const [showPass, setShowPass] = useState(false)
+  const navigate                = useNavigate()
 
   const submit = async (e) => {
     e.preventDefault()
@@ -67,14 +68,35 @@ export default function Login() {
 
             <div className="form-group" style={{ marginBottom: '1.5rem' }}>
               <label className="form-label">Password</label>
-              <input
-                className="form-control"
-                type="password"
-                required
-                value={form.password}
-                onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
-                placeholder="••••••••"
-              />
+              <div style={{ position: 'relative' }}>
+                <input
+                  className="form-control"
+                  type={showPass ? 'text' : 'password'}
+                  required
+                  value={form.password}
+                  onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
+                  placeholder="••••••••"
+                  style={{ paddingRight: '2.75rem' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPass(v => !v)}
+                  style={{
+                    position: 'absolute', top: '50%', right: '0.75rem',
+                    transform: 'translateY(-50%)',
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    color: 'var(--gray-400)', fontSize: '1rem', padding: '0.2rem',
+                    display: 'flex', alignItems: 'center',
+                    transition: 'color 0.2s',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.color = 'var(--navy)'}
+                  onMouseLeave={e => e.currentTarget.style.color = 'var(--gray-400)'}
+                  tabIndex={-1}
+                  aria-label={showPass ? 'Hide password' : 'Show password'}
+                >
+                  <i className={`bi ${showPass ? 'bi-eye-slash' : 'bi-eye'}`} />
+                </button>
+              </div>
             </div>
 
             <button
