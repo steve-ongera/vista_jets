@@ -192,25 +192,34 @@ export default function FlightBooking() {
 
                 <hr className="hr" />
 
-                {/* Section: Add-ons */}
+                {/* ── Section: Add-ons ── */}
                 <div style={{ marginBottom: '2.5rem' }}>
                   <h3 style={{ fontSize: '1.1rem', marginBottom: '0.25rem' }}>Additional Services</h3>
                   <p style={{ fontSize: '0.82rem', marginBottom: '1.5rem' }}>Enhance your journey with our premium services.</p>
                   <div className="grid-3">
                     {ADDONS.map(({ key, icon, label, desc }) => (
-                      <label
+                      // FIX: <label> wrapping a checkbox fires the handler twice —
+                      // once from onClick, once from the label's native checkbox toggle.
+                      // Solution: use a plain <div> as the visual card and let the
+                      // hidden checkbox's onChange be the single source of truth.
+                      <div
                         key={key}
                         className={`check-group${form[key] ? ' checked' : ''}`}
                         onClick={() => set(key, !form[key])}
-                        style={{ cursor: 'pointer' }}
+                        style={{ cursor: 'pointer', userSelect: 'none' }}
                       >
-                        <input type="checkbox" checked={form[key]} onChange={() => {}} style={{ display: 'none' }} />
+                        <input
+                          type="checkbox"
+                          checked={form[key]}
+                          onChange={() => {}}   // state is driven by the div's onClick
+                          style={{ display: 'none' }}
+                        />
                         <i className={`bi ${icon}`} style={{ color: form[key] ? 'var(--navy)' : 'var(--gold)', fontSize: '1.1rem' }} />
                         <div>
                           <div style={{ fontWeight: 600, fontSize: '0.82rem' }}>{label}</div>
                           <div style={{ fontSize: '0.74rem', color: 'var(--gray-400)', marginTop: 2 }}>{desc}</div>
                         </div>
-                      </label>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -260,7 +269,7 @@ export default function FlightBooking() {
               <div className="card" style={{ padding: '1.5rem', background: 'var(--navy)', border: 'none' }}>
                 <h4 style={{ color: 'var(--white)', fontSize: '0.95rem', marginBottom: '0.5rem' }}>Prefer to Talk?</h4>
                 <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: '0.82rem', marginBottom: '1rem' }}>Our concierge team is available 24 / 7 by phone.</p>
-                <a href="tel:+18005478538" className="btn btn-gold btn-sm" style={{ width: '100%', justifyContent: 'center' }}>
+                <a href="tel:+254724878136" className="btn btn-gold btn-sm" style={{ width: '100%', justifyContent: 'center' }}>
                   <i className="bi bi-telephone" /> +254 724 878 136
                 </a>
               </div>
