@@ -484,18 +484,29 @@ class SendEmailSerializer(serializers.Serializer):
 
 
 # ── FLIGHT BOOKING ADMIN SERIALIZERS ─────────────────────────────────────────
+# ── PATCH: Replace FlightBookingAdminSerializer & FlightBookingPriceSerializer
+# in your existing serializers.py with these versions.
+# All other serializers stay exactly as-is.
+
+from decimal import Decimal, ROUND_HALF_UP
+from .models import CommissionSetting
+
+
 class FlightBookingAdminSerializer(serializers.ModelSerializer):
-    """Full admin view with computed price, status control"""
-    legs          = serializers.SerializerMethodField()
-    origin_detail = serializers.SerializerMethodField()
-    dest_detail   = serializers.SerializerMethodField()
-    status_display = serializers.CharField(source='get_status_display', read_only=True)
+    """Full admin view — includes commission breakdown."""
+    legs              = serializers.SerializerMethodField()
+    origin_detail     = serializers.SerializerMethodField()
+    dest_detail       = serializers.SerializerMethodField()
+    status_display    = serializers.CharField(source='get_status_display',    read_only=True)
     trip_type_display = serializers.CharField(source='get_trip_type_display', read_only=True)
+
+    # Computed helpers for the frontend
+    commission_pct_display = serializers.SerializerMethodField()
 
     class Meta:
         model  = FlightBooking
         fields = '__all__'
-        read_only_fields = ['reference', 'created_at', 'updated_at']
+        read_only_fields = ['reference', 'commission_usd', 'net_revenue_usd', 'created_at', 'updated_at']
 
     def get_legs(self, obj):
         from .serializers import FlightLegSerializer
@@ -511,16 +522,44 @@ class FlightBookingAdminSerializer(serializers.ModelSerializer):
             return {'id': obj.destination.id, 'code': obj.destination.code, 'city': obj.destination.city}
         return None
 
+    def get_commission_pct_display(self, obj):
+        return f"{obj.commission_pct}%"
+
 
 class FlightBookingPriceSerializer(serializers.Serializer):
-    """Admin sets a quoted price and optionally sends email"""
+    """
+    Admin sets a quoted price.
+    commission_pct defaults to the latest CommissionSetting if not provided.
+    commission_usd and net_revenue_usd are auto-calculated on the model's save().
+    """
     quoted_price_usd = serializers.DecimalField(max_digits=12, decimal_places=2)
+    commission_pct   = serializers.DecimalField(
+        max_digits=5, decimal_places=2, required=False, allow_null=True,
+        help_text="Leave blank to use current platform commission rate."
+    )
     status           = serializers.ChoiceField(
-        choices=['inquiry','quoted','confirmed','in_flight','completed','cancelled'],
+        choices=['inquiry', 'quoted', 'confirmed', 'in_flight', 'completed', 'cancelled'],
         required=False
     )
-    send_email       = serializers.BooleanField(default=True)
-    email_message    = serializers.CharField(required=False, default='')
+    send_email    = serializers.BooleanField(default=True)
+    email_message = serializers.CharField(required=False, default='')
+
+    def validate(self, data):
+        # Auto-fill commission_pct from the active CommissionSetting
+        if not data.get('commission_pct'):
+            setting = CommissionSetting.objects.order_by('-effective_from').first()
+            data['commission_pct'] = setting.rate_pct if setting else Decimal('10')
+        return data
+
+
+# ── ALSO ADD: AdminOverview revenue serializer ─────────────────────────────────
+class FlightRevenuePointSerializer(serializers.Serializer):
+    """Used for the revenue time-series chart on the admin dashboard."""
+    month          = serializers.CharField()   # e.g. "2025-01"
+    confirmed_count = serializers.IntegerField()
+    gross_usd      = serializers.DecimalField(max_digits=14, decimal_places=2)
+    commission_usd = serializers.DecimalField(max_digits=14, decimal_places=2)
+    net_usd        = serializers.DecimalField(max_digits=14, decimal_places=2)
 
 
 class FlightBookingCreateAdminSerializer(serializers.ModelSerializer):

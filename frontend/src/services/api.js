@@ -277,3 +277,9 @@ export const getAuthHeaders  = () => {
   const t = getAccessToken();
   return t ? { Authorization: `Bearer ${t}` } : {};
 };
+
+// ✅ FIXED — uses authFetch like everything else in this file
+export const adminGetRevenueChart    = (months = 12) =>
+  authFetch(`/admin/overview/revenue_chart/?months=${months}`)
+export const adminGetCombinedRevenue = () =>
+  authFetch(`/admin/overview/combined_revenue/`)

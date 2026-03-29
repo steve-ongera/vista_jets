@@ -64,49 +64,70 @@ class Yacht(models.Model):
 
 class FlightBooking(models.Model):
     STATUS_CHOICES = [
-        ('inquiry', 'Inquiry'),
-        ('quoted', 'Quoted'),
+        ('inquiry',   'Inquiry'),
+        ('quoted',    'Quoted'),
         ('confirmed', 'Confirmed'),
         ('in_flight', 'In Flight'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
     ]
     TRIP_TYPE_CHOICES = [
-        ('one_way', 'One Way'),
+        ('one_way',    'One Way'),
         ('round_trip', 'Round Trip'),
-        ('multi_leg', 'Multi-Leg'),
+        ('multi_leg',  'Multi-Leg'),
     ]
-
-    reference = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+ 
+    reference   = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+ 
     # Guest info (no account required)
-    guest_name = models.CharField(max_length=200)
+    guest_name  = models.CharField(max_length=200)
     guest_email = models.EmailField()
     guest_phone = models.CharField(max_length=30, blank=True)
-    company = models.CharField(max_length=200, blank=True)
-
+    company     = models.CharField(max_length=200, blank=True)
+ 
     # Flight details
-    trip_type = models.CharField(max_length=20, choices=TRIP_TYPE_CHOICES, default='one_way')
-    origin = models.ForeignKey(Airport, on_delete=models.PROTECT, related_name='departures')
-    destination = models.ForeignKey(Airport, on_delete=models.PROTECT, related_name='arrivals')
-    departure_date = models.DateField()
-    departure_time = models.TimeField(null=True, blank=True)
-    return_date = models.DateField(null=True, blank=True)
-    passenger_count = models.PositiveIntegerField()
-    aircraft = models.ForeignKey(Aircraft, on_delete=models.SET_NULL, null=True, blank=True)
-
+    trip_type        = models.CharField(max_length=20, choices=TRIP_TYPE_CHOICES, default='one_way')
+    origin           = models.ForeignKey('Airport', on_delete=models.PROTECT, related_name='departures')
+    destination      = models.ForeignKey('Airport', on_delete=models.PROTECT, related_name='arrivals')
+    departure_date   = models.DateField()
+    departure_time   = models.TimeField(null=True, blank=True)
+    return_date      = models.DateField(null=True, blank=True)
+    passenger_count  = models.PositiveIntegerField()
+    aircraft         = models.ForeignKey('Aircraft', on_delete=models.SET_NULL, null=True, blank=True)
+ 
     # Preferences & extras
-    special_requests = models.TextField(blank=True)
-    catering_requested = models.BooleanField(default=False)
-    ground_transport_requested = models.BooleanField(default=False)
-    concierge_requested = models.BooleanField(default=False)
-
-    # Pricing
-    quoted_price_usd = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='inquiry')
-
+    special_requests              = models.TextField(blank=True)
+    catering_requested            = models.BooleanField(default=False)
+    ground_transport_requested    = models.BooleanField(default=False)
+    concierge_requested           = models.BooleanField(default=False)
+ 
+    # ── Pricing & Commission (NEW) ────────────────────────────────────────────
+    quoted_price_usd  = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True,
+                                             help_text="Total price quoted to the client")
+    commission_pct    = models.DecimalField(max_digits=5, decimal_places=2, default=10,
+                                             help_text="Platform commission % applied at time of confirmation")
+    commission_usd    = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True,
+                                             help_text="Platform earnings = quoted_price × commission_pct / 100")
+    net_revenue_usd   = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True,
+                                             help_text="Remainder after commission (goes to ops / crew)")
+ 
+    status     = models.CharField(max_length=20, choices=STATUS_CHOICES, default='inquiry')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+ 
+    # ── Auto-calculate commission whenever price/status is saved ─────────────
+    def save(self, *args, **kwargs):
+        if self.quoted_price_usd is not None:
+            from decimal import Decimal, ROUND_HALF_UP
+            pct = Decimal(str(self.commission_pct or 10))
+            price = Decimal(str(self.quoted_price_usd))
+            self.commission_usd  = (price * pct / 100).quantize(Decimal('0.01'), ROUND_HALF_UP)
+            self.net_revenue_usd = (price - self.commission_usd).quantize(Decimal('0.01'), ROUND_HALF_UP)
+        else:
+            self.commission_usd  = None
+            self.net_revenue_usd = None
+        super().save(*args, **kwargs)
+ 
     def __str__(self):
         return f"Flight {self.reference} | {self.origin.code} → {self.destination.code} | {self.guest_name}"
 

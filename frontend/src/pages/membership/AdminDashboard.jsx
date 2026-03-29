@@ -19,8 +19,14 @@ import {
   adminGetInquiriesSummary,
   searchAirports,
   getAircraft,
+  adminGetRevenueChart,
+  adminGetCombinedRevenue,
 } from '../../services/api'
 import '../../styles/membership_styles.css'
+import {
+  BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+} from 'recharts'
 
 const NAV = [
   { section: 'Dashboard' },
@@ -707,6 +713,9 @@ export default function AdminDashboard() {
   const [mpBookings,     setMpBookings]     = useState([])
   const [users,          setUsers]          = useState([])
   const [emailLogs,      setEmailLogs]      = useState([])
+  const [revenueChart,   setRevenueChart]   = useState([])
+  const [combinedRev,    setCombinedRev]    = useState(null)
+  const [chartLoading,   setChartLoading]   = useState(false)
   const [newRate, setNewRate]   = useState('')
   const [rateNote, setRateNote] = useState('')
   const [rateSaving, setRateSaving] = useState(false)
@@ -758,6 +767,18 @@ export default function AdminDashboard() {
       'email-logs':      () => getEmailLogs().then(d            => setEmailLogs(Array.isArray(d)?d:d.results||[])),
     }
     if (loaders[tab]) { setTabLoading(true); loaders[tab]().catch(()=>{}).finally(()=>setTabLoading(false)) }
+  }, [tab])
+
+  useEffect(() => {
+    if (tab !== 'overview') return
+    setChartLoading(true)
+    Promise.all([adminGetRevenueChart(12), adminGetCombinedRevenue()])
+      .then(([chart, combined]) => {
+        setRevenueChart(chart.chart || [])
+        setCombinedRev(combined)
+      })
+      .catch(() => {})
+      .finally(() => setChartLoading(false))
   }, [tab])
 
   const handleApprove = async (id) => {
@@ -1157,6 +1178,143 @@ export default function AdminDashboard() {
               </div>
               <div className="mem-panel">
                 <div className="mem-panel-header"><div className="mem-panel-title"><i className="bi bi-lightning" /> Quick Actions</div></div>
+                {/* ── REVENUE CHARTS ─────────────────────────────────────── */}
+              {chartLoading && (
+                <div style={{textAlign:'center',padding:'1.5rem',color:'var(--gray-400)',fontSize:'0.85rem'}}>
+                  <span className="spinner" style={{marginRight:8}} /> Loading charts…
+                </div>
+              )}
+
+              {!chartLoading && revenueChart.length > 0 && (
+                <div className="grid-2" style={{marginBottom:'1.75rem',alignItems:'start'}}>
+
+                  {/* Bar Chart — Monthly Gross Revenue */}
+                  <div className="mem-panel">
+                    <div className="mem-panel-header">
+                      <div className="mem-panel-title"><i className="bi bi-bar-chart-fill" /> Monthly Revenue (USD)</div>
+                    </div>
+                    <div className="mem-panel-body" style={{paddingTop:'0.5rem'}}>
+                      <ResponsiveContainer width="100%" height={220}>
+                        <BarChart data={revenueChart} margin={{top:4,right:8,left:0,bottom:0}}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                          <XAxis dataKey="label" tick={{fontSize:10,fill:'#9ca3af'}} tickLine={false} axisLine={false} />
+                          <YAxis tick={{fontSize:10,fill:'#9ca3af'}} tickLine={false} axisLine={false}
+                            tickFormatter={v => `$${(v/1000).toFixed(0)}k`} />
+                          <Tooltip
+                            formatter={(value, name) => [`$${Number(value).toLocaleString()}`, name]}
+                            contentStyle={{fontSize:'0.78rem',borderRadius:8,border:'1px solid #e5e7eb',boxShadow:'0 4px 12px rgba(0,0,0,0.08)'}}
+                          />
+                          <Legend wrapperStyle={{fontSize:'0.72rem',paddingTop:'0.5rem'}} />
+                          <Bar dataKey="gross_usd"      name="Gross"      fill="#0b1d3a" radius={[4,4,0,0]} />
+                          <Bar dataKey="commission_usd" name="Commission" fill="#C9A84C" radius={[4,4,0,0]} />
+                          <Bar dataKey="net_usd"        name="Net"        fill="#50C878" radius={[4,4,0,0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+
+                  {/* Line Chart — Bookings Count Trend */}
+                  <div className="mem-panel">
+                    <div className="mem-panel-header">
+                      <div className="mem-panel-title"><i className="bi bi-graph-up" /> Bookings Trend</div>
+                    </div>
+                    <div className="mem-panel-body" style={{paddingTop:'0.5rem'}}>
+                      <ResponsiveContainer width="100%" height={220}>
+                        <LineChart data={revenueChart} margin={{top:4,right:8,left:0,bottom:0}}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                          <XAxis dataKey="label" tick={{fontSize:10,fill:'#9ca3af'}} tickLine={false} axisLine={false} />
+                          <YAxis tick={{fontSize:10,fill:'#9ca3af'}} tickLine={false} axisLine={false} allowDecimals={false} />
+                          <Tooltip
+                            contentStyle={{fontSize:'0.78rem',borderRadius:8,border:'1px solid #e5e7eb',boxShadow:'0 4px 12px rgba(0,0,0,0.08)'}}
+                          />
+                          <Legend wrapperStyle={{fontSize:'0.72rem',paddingTop:'0.5rem'}} />
+                          <Line type="monotone" dataKey="confirmed_count" name="Bookings"
+                            stroke="#0b1d3a" strokeWidth={2.5} dot={{r:4,fill:'#0b1d3a'}}
+                            activeDot={{r:6,fill:'#C9A84C'}} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {!chartLoading && combinedRev && (
+                <div className="grid-2" style={{marginBottom:'1.75rem',alignItems:'start'}}>
+
+                  {/* Combined Revenue Summary Cards */}
+                  <div className="mem-panel">
+                    <div className="mem-panel-header">
+                      <div className="mem-panel-title"><i className="bi bi-layers" /> Combined Revenue Breakdown</div>
+                    </div>
+                    <div className="mem-panel-body">
+                      {[
+                        ['Flight Bookings Gross',   combinedRev.flight_bookings?.gross,      '#0b1d3a'],
+                        ['Flight Commissions',      combinedRev.flight_bookings?.commission,  '#C9A84C'],
+                        ['Marketplace Gross',       combinedRev.marketplace_bookings?.gross,  '#0b1d3a'],
+                        ['Marketplace Commissions', combinedRev.marketplace_bookings?.commission, '#C9A84C'],
+                      ].map(([label, val, color]) => (
+                        <div key={label} className="mem-row">
+                          <span style={{fontSize:'0.83rem',color:'var(--gray-500)'}}>{label}</span>
+                          <span style={{fontFamily:'var(--font-display)',fontWeight:700,fontSize:'0.95rem',color}}>
+                            ${Number(val||0).toLocaleString(undefined,{minimumFractionDigits:2})}
+                          </span>
+                        </div>
+                      ))}
+                      <div style={{background:'var(--navy)',borderRadius:'var(--radius)',padding:'0.85rem 1.1rem',marginTop:'0.85rem',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                        <div>
+                          <div style={{color:'rgba(255,255,255,0.45)',fontSize:'0.65rem',textTransform:'uppercase',letterSpacing:'0.1em'}}>All-Time Net</div>
+                          <div style={{color:'rgba(255,255,255,0.3)',fontSize:'0.7rem'}}>After all commissions</div>
+                        </div>
+                        <span style={{fontFamily:'var(--font-display)',fontSize:'1.5rem',fontWeight:800,color:'var(--gold)'}}>
+                          ${Number(combinedRev.combined?.net||0).toLocaleString(undefined,{minimumFractionDigits:2})}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Donut — Platform vs Owner Split */}
+                  <div className="mem-panel">
+                    <div className="mem-panel-header">
+                      <div className="mem-panel-title"><i className="bi bi-pie-chart-fill" /> Revenue Split (All Time)</div>
+                    </div>
+                    <div className="mem-panel-body" style={{display:'flex',flexDirection:'column',alignItems:'center',paddingTop:'0.5rem'}}>
+                      <ResponsiveContainer width="100%" height={200}>
+                        <PieChart>
+                          <Pie
+                            data={[
+                              { name: 'Platform (Commission)', value: Number(combinedRev.combined?.commission||0) },
+                              { name: 'Owners (Net)',          value: Number(combinedRev.combined?.net||0) },
+                            ]}
+                            cx="50%" cy="50%"
+                            innerRadius={55} outerRadius={85}
+                            paddingAngle={3} dataKey="value"
+                          >
+                            <Cell fill="#0b1d3a" />
+                            <Cell fill="#C9A84C" />
+                          </Pie>
+                          <Tooltip
+                            formatter={v => `$${Number(v).toLocaleString(undefined,{minimumFractionDigits:2})}`}
+                            contentStyle={{fontSize:'0.78rem',borderRadius:8,border:'1px solid #e5e7eb'}}
+                          />
+                          <Legend wrapperStyle={{fontSize:'0.72rem'}} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                      <div style={{display:'flex',gap:'1.5rem',marginTop:'0.5rem'}}>
+                        {[['Platform',combinedRev.combined?.commission,'#0b1d3a'],['Owners',combinedRev.combined?.net,'#C9A84C']].map(([label,val,color])=>(
+                          <div key={label} style={{textAlign:'center'}}>
+                            <div style={{fontSize:'0.65rem',color:'var(--gray-400)',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:'0.2rem'}}>{label}</div>
+                            <div style={{fontFamily:'var(--font-display)',fontWeight:800,fontSize:'1rem',color}}>
+                              ${Number(val||0).toLocaleString(undefined,{minimumFractionDigits:0})}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              )}
+              {/* ── END REVENUE CHARTS ──────────────────────────────────── */}
                 <div className="mem-panel-body" style={{display:'flex',gap:'0.65rem',flexWrap:'wrap'}}>
                   {[['flight-bookings','bi-airplane','Flight Bookings'],['yacht-charters','bi-water','Yacht Charters'],['approvals','bi-check-circle','Aircraft Approvals'],['disputes','bi-flag','Disputes'],['price-calc','bi-calculator','Price Calculator'],['commission','bi-percent','Commission'],['users','bi-people-fill','Users']].map(([tabId,icon,label]) => {
                     const badge = navBadge(tabId)

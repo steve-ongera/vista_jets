@@ -992,13 +992,30 @@ class PriceCalculatorViewSet(viewsets.ViewSet):
 
 
 # ── FLIGHT BOOKING ADMIN VIEWSET ──────────────────────────────────────────────
+# ── PATCH: Replace FlightBookingAdminViewSet in your views.py ─────────────────
+# Also add the revenue_chart action to AdminOverviewViewSet.
+# Everything else stays as-is.
+
+from django.db.models import Sum, Count, Q
+from django.db.models.functions import TruncMonth
+from decimal import Decimal, ROUND_HALF_UP
+
+
 class FlightBookingAdminViewSet(viewsets.ModelViewSet):
+    """
+    Admin CRUD for FlightBooking.
+    set_price  — auto-calculates commission_usd & net_revenue_usd, then emails guest.
+    reply      — sends a freeform email without changing price.
+    update_status — changes status only.
+    """
     permission_classes = [IsAdminUser]
     filter_backends    = [filters.SearchFilter]
     search_fields      = ['guest_name', 'guest_email', 'reference']
 
     def get_queryset(self):
-        return FlightBooking.objects.select_related('origin', 'destination', 'aircraft').order_by('-created_at')
+        return FlightBooking.objects.select_related(
+            'origin', 'destination', 'aircraft'
+        ).prefetch_related('legs').order_by('-created_at')
 
     def get_serializer_class(self):
         from .serializers import FlightBookingAdminSerializer, FlightBookingCreateAdminSerializer
@@ -1008,33 +1025,47 @@ class FlightBookingAdminViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def set_price(self, request, pk=None):
-        """Admin sets quoted price, updates status, sends confirmation email"""
+        """
+        1. Validates quoted_price_usd + optional commission_pct.
+        2. Saves to booking — model.save() auto-calculates commission_usd & net_revenue_usd.
+        3. Optionally emails the guest a quote.
+        """
         from .serializers import FlightBookingPriceSerializer
         booking = self.get_object()
         ser = FlightBookingPriceSerializer(data=request.data)
         if not ser.is_valid():
             return Response(ser.errors, status=400)
+
         d = ser.validated_data
 
+        # Write price & commission_pct — model.save() handles the maths
         booking.quoted_price_usd = d['quoted_price_usd']
+        booking.commission_pct   = d['commission_pct']          # already defaulted in serializer
         if d.get('status'):
             booking.status = d['status']
-        booking.save()
+        booking.save()   # ← triggers auto-calc of commission_usd & net_revenue_usd
 
-        result = {'message': 'Price updated.', 'email_sent': False}
+        result = {
+            'message':        'Price & commission updated.',
+            'quoted_price':   float(booking.quoted_price_usd),
+            'commission_pct': float(booking.commission_pct),
+            'commission_usd': float(booking.commission_usd or 0),
+            'net_revenue':    float(booking.net_revenue_usd or 0),
+            'email_sent':     False,
+        }
 
         if d.get('send_email', True):
             route = f"{booking.origin.code} → {booking.destination.code}"
             body  = d.get('email_message') or (
                 f"Dear {booking.guest_name},\n\n"
                 f"Thank you for your flight enquiry with NairobiJetHouse.\n\n"
-                f"We are pleased to provide your quote for the following flight:\n\n"
-                f"Route:       {route}\n"
-                f"Date:        {booking.departure_date}\n"
-                f"Passengers:  {booking.passenger_count}\n"
-                f"Trip Type:   {booking.get_trip_type_display()}\n\n"
-                f"Quoted Price: USD ${d['quoted_price_usd']:,.2f}\n\n"
-                f"To confirm your booking, please reply to this email or contact your dedicated concierge.\n\n"
+                f"We are pleased to provide your personalised quote:\n\n"
+                f"  Route:       {route}\n"
+                f"  Date:        {booking.departure_date}\n"
+                f"  Passengers:  {booking.passenger_count}\n"
+                f"  Trip Type:   {booking.get_trip_type_display()}\n\n"
+                f"  Quoted Price: USD ${float(booking.quoted_price_usd):,.2f}\n\n"
+                f"To confirm your booking please reply to this email or contact your dedicated concierge.\n\n"
                 f"Warm regards,\nNairobiJetHouse Operations Team"
             )
             ok, err = _send_email_and_log(
@@ -1050,7 +1081,7 @@ class FlightBookingAdminViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'])
     def reply(self, request, pk=None):
-        """Send a custom email reply to the guest"""
+        """Send a custom email reply — optionally update status/price."""
         from .serializers import InquiryReplySerializer
         booking = self.get_object()
         ser = InquiryReplySerializer(data=request.data)
@@ -1080,6 +1111,116 @@ class FlightBookingAdminViewSet(viewsets.ModelViewSet):
         booking.status = new_status
         booking.save()
         return Response({'message': f'Status updated to {new_status}.'})
+
+
+# ── PATCH: Add revenue_chart to AdminOverviewViewSet ─────────────────────────
+# Append this action inside your existing AdminOverviewViewSet class.
+
+    @action(detail=False, methods=['get'])
+    def revenue_chart(self, request):
+        """
+        Monthly revenue time-series for confirmed/completed FlightBookings.
+        Returns last 12 months by default (or ?months=N).
+        Only bookings with status in ['confirmed','in_flight','completed']
+        and a non-null quoted_price_usd are counted.
+        """
+        from django.utils import timezone
+        from datetime import timedelta
+        from django.db.models.functions import TruncMonth
+
+        months = int(request.query_params.get('months', 12))
+        since  = timezone.now() - timedelta(days=months * 31)
+
+        qs = (
+            FlightBooking.objects
+            .filter(
+                status__in=['confirmed', 'in_flight', 'completed'],
+                quoted_price_usd__isnull=False,
+                created_at__gte=since,
+            )
+            .annotate(month=TruncMonth('created_at'))
+            .values('month')
+            .annotate(
+                confirmed_count=Count('id'),
+                gross_usd      =Sum('quoted_price_usd'),
+                commission_usd =Sum('commission_usd'),
+                net_usd        =Sum('net_revenue_usd'),
+            )
+            .order_by('month')
+        )
+
+        data = [
+            {
+                'month':           row['month'].strftime('%Y-%m'),
+                'label':           row['month'].strftime('%b %Y'),
+                'confirmed_count': row['confirmed_count'],
+                'gross_usd':       float(row['gross_usd']   or 0),
+                'commission_usd':  float(row['commission_usd'] or 0),
+                'net_usd':         float(row['net_usd']     or 0),
+            }
+            for row in qs
+        ]
+
+        # Also include a totals object for quick summary cards
+        totals_qs = FlightBooking.objects.filter(
+            status__in=['confirmed', 'in_flight', 'completed'],
+            quoted_price_usd__isnull=False,
+        ).aggregate(
+            total_bookings    =Count('id'),
+            total_gross       =Sum('quoted_price_usd'),
+            total_commission  =Sum('commission_usd'),
+            total_net         =Sum('net_revenue_usd'),
+        )
+
+        return Response({
+            'chart': data,
+            'totals': {
+                'total_bookings':   totals_qs['total_bookings']   or 0,
+                'total_gross':      float(totals_qs['total_gross']      or 0),
+                'total_commission': float(totals_qs['total_commission'] or 0),
+                'total_net':        float(totals_qs['total_net']        or 0),
+            },
+        })
+
+
+    @action(detail=False, methods=['get'])
+    def combined_revenue(self, request):
+        """
+        Combines FlightBooking + MarketplaceBooking confirmed revenue.
+        Used for the grand total platform revenue card.
+        """
+        flight_agg = FlightBooking.objects.filter(
+            status__in=['confirmed', 'in_flight', 'completed'],
+            quoted_price_usd__isnull=False,
+        ).aggregate(
+            gross      =Sum('quoted_price_usd'),
+            commission =Sum('commission_usd'),
+        )
+        mp_agg = MarketplaceBooking.objects.filter(
+            status='completed',
+        ).aggregate(
+            gross      =Sum('gross_amount_usd'),
+            commission =Sum('commission_usd'),
+        )
+
+        total_gross      = float(flight_agg['gross']      or 0) + float(mp_agg['gross']      or 0)
+        total_commission = float(flight_agg['commission'] or 0) + float(mp_agg['commission'] or 0)
+
+        return Response({
+            'flight_bookings': {
+                'gross':      float(flight_agg['gross']      or 0),
+                'commission': float(flight_agg['commission'] or 0),
+            },
+            'marketplace_bookings': {
+                'gross':      float(mp_agg['gross']      or 0),
+                'commission': float(mp_agg['commission'] or 0),
+            },
+            'combined': {
+                'gross':      total_gross,
+                'commission': total_commission,
+                'net':        total_gross - total_commission,
+            },
+        })
 
 
 # ── YACHT CHARTER ADMIN VIEWSET ───────────────────────────────────────────────
@@ -1436,4 +1577,103 @@ class AdminOverviewViewSet(viewsets.ViewSet):
             'owners':         User.objects.filter(role='owner').count(),
             'active_members': Membership.objects.filter(status='active').count(),
             'expired':        Membership.objects.filter(status='expired').count(),
+        })
+
+    @action(detail=False, methods=['get'])
+    def revenue_chart(self, request):
+        """
+        Monthly revenue time-series for confirmed/completed FlightBookings.
+        Returns last 12 months by default (or ?months=N).
+        """
+        from django.db.models.functions import TruncMonth
+
+        months = int(request.query_params.get('months', 12))
+        since  = timezone.now() - timedelta(days=months * 31)
+
+        qs = (
+            FlightBooking.objects
+            .filter(
+                status__in=['confirmed', 'in_flight', 'completed'],
+                quoted_price_usd__isnull=False,
+                created_at__gte=since,
+            )
+            .annotate(month=TruncMonth('created_at'))
+            .values('month')
+            .annotate(
+                confirmed_count=Count('id'),
+                gross_usd      =Sum('quoted_price_usd'),
+                commission_usd =Sum('commission_usd'),
+                net_usd        =Sum('net_revenue_usd'),
+            )
+            .order_by('month')
+        )
+
+        data = [
+            {
+                'month':            row['month'].strftime('%Y-%m'),
+                'label':            row['month'].strftime('%b %Y'),
+                'confirmed_count':  row['confirmed_count'],
+                'gross_usd':        float(row['gross_usd']        or 0),
+                'commission_usd':   float(row['commission_usd']   or 0),
+                'net_usd':          float(row['net_usd']          or 0),
+            }
+            for row in qs
+        ]
+
+        totals_qs = FlightBooking.objects.filter(
+            status__in=['confirmed', 'in_flight', 'completed'],
+            quoted_price_usd__isnull=False,
+        ).aggregate(
+            total_bookings   =Count('id'),
+            total_gross      =Sum('quoted_price_usd'),
+            total_commission =Sum('commission_usd'),
+            total_net        =Sum('net_revenue_usd'),
+        )
+
+        return Response({
+            'chart': data,
+            'totals': {
+                'total_bookings':   totals_qs['total_bookings']   or 0,
+                'total_gross':      float(totals_qs['total_gross']      or 0),
+                'total_commission': float(totals_qs['total_commission'] or 0),
+                'total_net':        float(totals_qs['total_net']        or 0),
+            },
+        })
+
+    @action(detail=False, methods=['get'])
+    def combined_revenue(self, request):
+        """
+        Combines FlightBooking + MarketplaceBooking confirmed revenue.
+        """
+        flight_agg = FlightBooking.objects.filter(
+            status__in=['confirmed', 'in_flight', 'completed'],
+            quoted_price_usd__isnull=False,
+        ).aggregate(
+            gross      =Sum('quoted_price_usd'),
+            commission =Sum('commission_usd'),
+        )
+        mp_agg = MarketplaceBooking.objects.filter(
+            status='completed',
+        ).aggregate(
+            gross      =Sum('gross_amount_usd'),
+            commission =Sum('commission_usd'),
+        )
+
+        total_gross      = float(flight_agg['gross']      or 0) + float(mp_agg['gross']      or 0)
+        total_commission = float(flight_agg['commission'] or 0) + float(mp_agg['commission'] or 0)
+
+        return Response({
+            'flight_bookings': {
+                'gross':      float(flight_agg['gross']      or 0),
+                'commission': float(flight_agg['commission'] or 0),
+            },
+            'marketplace_bookings': {
+                'gross':      float(mp_agg['gross']      or 0),
+                'commission': float(mp_agg['commission'] or 0),
+            },
+            'combined': {
+                'gross':      total_gross,
+                'commission': total_commission,
+                'net':        total_gross - total_commission,
+            },
         })
